@@ -1,7 +1,6 @@
 import { startSimulation, pauseSimulation, updateSimulation } from './api.js';
 
 const responseEl = document.getElementById('response');
-const drones = initDrones();
 
 document.getElementById('start').onclick = async () => {
   const msg = await startSimulation();
