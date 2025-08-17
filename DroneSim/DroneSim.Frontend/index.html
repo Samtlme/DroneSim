@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drone Simulator</title>
+  <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+
+<body class="p-3">
+
+  <div class="container">
+    <h1 class="mb-3">Drone Simulator</h1>
+    <div class="btn-group mb-3">
+      <button id="start" class="btn btn-success">Start Simulation</button>
+      <button id="pause" class="btn btn-warning">Pause Simulation</button>
+      <button id="update" class="btn btn-primary">Update Simulation</button>
+    </div>
+
+    <p id="response"></p>
+
+    <!-- Three.js canvas -->
+    <div id="simulationCanvas"></div>
+  </div>
+
+    <!-- Scripts -->
+    <script src="libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="scripts/main.js"></script>
+</body>
+</html>
