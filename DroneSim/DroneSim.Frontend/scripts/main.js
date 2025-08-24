@@ -1,5 +1,7 @@
 import { startSimulation, pauseSimulation, updateSimulation } from './api.js';
+import { initSimulator } from './simulator.js';
 
+const sim = initSimulator('simulator-container');
 const responseEl = document.getElementById('response');
 
 document.getElementById('start').onclick = async () => {

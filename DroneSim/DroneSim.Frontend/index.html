@@ -13,7 +13,7 @@
     <div class="sidebar nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
       <a class="nav-link active" id="general-tab" data-bs-toggle="pill" href="#general-tab-content" role="tab">Home</a>
       <a class="nav-link" id="simulation-tab" data-bs-toggle="pill" href="#simulation-tab-content" role="tab">Drone Simulator</a>
-     </div>
+    </div>
 
     <div class="content tab-content" id="v-pills-tabContent">
       <div class="tab-pane fade show active" id="general-tab-content" role="tabpanel">
@@ -31,21 +31,23 @@
 
       <div class="tab-pane fade" id="simulation-tab-content" role="tabpanel">
 
-          <div class="container">
-          <h1 class="mb-3">Drone Simulator</h1>
-          <div class="btn-group mb-3">
-            <button id="start" class="btn btn-success">Start Simulation</button>
-            <button id="pause" class="btn btn-warning">Pause Simulation</button>
-            <button id="update" class="btn btn-primary">Update Simulation</button>
+        <div class="container">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h1 class="mb-0">Drone Simulator</h1>
+            <div class="btn-group">
+              <button id="start" class="btn btn-success">Start Simulation</button>
+              <button id="pause" class="btn btn-warning">Pause Simulation</button>
+              <button id="update" class="btn btn-primary">Update Simulation</button>
+            </div>
           </div>
 
-          <p id="response"></p> <!-- debug -->
+          <p>Debug: </p> <p id="response"></p> <!-- debug -->
 
-          <!-- Three.js canvas -->
-          <div id="simulationCanvas"></div>
+          <!-- Simulator -->
+          <div id="simulator-container"></div>
         </div>
-
       </div>
+
     </div>
 
     <!-- Scripts -->
