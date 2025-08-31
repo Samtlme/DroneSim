@@ -34,8 +34,8 @@ export function initSimulator(containerId) {
     controls.enableDamping = true;
     controls.dampingFactor = 0.1;  //smooth movement
     controls.rotateSpeed = 0.3; 
-    controls.zoomSpeed = 0.5;
-    controls.panSpeed = 0.5;
+    controls.zoomSpeed = 0.7;
+    controls.panSpeed = 0.7;
     controls.screenSpacePanning = false;
     controls.maxPolarAngle = Math.PI / 2;   //Angle limit
     //zoom min-max
