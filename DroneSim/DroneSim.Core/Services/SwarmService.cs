@@ -22,7 +22,7 @@ namespace DroneSim.Core.Services
                 {
                     id = i + 1,
                     x = rnd.NextDouble() * 10,
-                    y = rnd.NextDouble() * 10,
+                    y = rnd.NextDouble() * 25,
                     z = rnd.NextDouble() * 10
                 });
             }
@@ -67,6 +67,13 @@ namespace DroneSim.Core.Services
         public void UpdateDronePositions()
         {
             //TODO:Update position core logic
+            var rnd = new Random();
+            foreach (var drone in _drones)
+            {
+                drone.x += (rnd.NextDouble() * 1.5) * (rnd.Next(0, 2) == 0 ? -1 : 1);
+                drone.y += (rnd.NextDouble() * 1.5) * (rnd.Next(0, 2) == 0 ? -1 : 1);
+                drone.z += (rnd.NextDouble() * 1.5) * (rnd.Next(0, 2) == 0 ? -1 : 1);
+            }
         }
 
 

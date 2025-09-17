@@ -68,7 +68,7 @@ function animateDrones() {
         if (!mesh) return;
 
         const target = new THREE.Vector3(d.x, d.y, d.z);
-        mesh.position.lerp(target, 0.1); 
+        mesh.position.lerp(target, 0.01); 
     });
 
     requestAnimationFrame(animateDrones);
