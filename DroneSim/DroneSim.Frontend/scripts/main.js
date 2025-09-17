@@ -2,16 +2,53 @@ import { startSimulation, pauseSimulation, updateSimulation } from './api.js';
 import { initSimulator } from './simulator.js';
 import * as signalR from '@microsoft/signalr';
 import DM from './droneManager.js';
+import * as THREE from 'three';
 
 
 const simulation = initSimulator('simulator-container');
 const responseEl = document.getElementById('response');
+let connection;
+
 
 document.getElementById('start').onclick = async () => {
   const msg = await startSimulation();
   responseEl.textContent = msg;
   
-  DM.droneData.forEach(d => DM.spawnDrone(simulation.scene,d.id, d.x, d.y, d.z, d.color));  //testing drone spawn
+  if(!connection)
+    {
+      connection = new signalR.HubConnectionBuilder()
+      .withUrl("https://localhost:7057/Api/Simulation/droneshub")
+      .withAutomaticReconnect()
+      .build();
+
+      connection.on("UpdateDrones", (apiDrones) => {
+          apiDrones.forEach(d => {
+
+            if(!DM.drones[d.id]){
+              DM.drones[d.id] = DM.spawnDrone(simulation.scene, d.id, d.x, d.y, d.z, d.Color || 0x00ff00);
+            }
+
+            const existing = DM.droneData.find(dr => dr.id === d.id);
+            if(existing){
+              existing.x = d.x;
+              existing.y = d.y;
+              existing.z = d.z;
+            }else{
+              DM.droneData.push({ id: d.id, x: d.x, y: d.y, z: d.z });
+            }
+          });
+          
+          moveDrones(DM.droneData, 1000);
+      });
+  }
+
+  try {
+    await connection.start();
+    console.log("SignalR connected");
+  } catch (err) {
+    console.error("Error connecting to hub:", err);
+  }
+
 };
 
 document.getElementById('pause').onclick = async () => {
@@ -22,36 +59,20 @@ document.getElementById('pause').onclick = async () => {
 document.getElementById('update').onclick = async () => {
   const msg = await updateSimulation();
   responseEl.textContent = msg + ' | Drones: ' + JSON.stringify(DM.drones);
-  //moveDrones
 };
 
 
-/*
-for example for moveDrones->
-const targetPositions = [
-    { id: 1, x: 0, y: 5, z: 0 },
-    { id: 2, x: 2, y: 4, z: -1 },
-    { id: 3, x: -2, y: 6, z: 1 }
-];
-*/ 
+function animateDrones() {
+    DM.droneData.forEach(d => {
+        const mesh = DM.drones[d.id];
+        if (!mesh) return;
 
-function moveDrones(targetPositions, duration = 1000) { //duration = total time to move
-    targetPositions.forEach(pos => {
-        const drone = DM.drones[pos.id];
-        if (!drone) return;
-
-        const startPos = drone.position.clone();
-        const targetPos = new THREE.Vector3(pos.x, pos.y, pos.z);
-        const startTime = performance.now();
-
-        function animate() {
-            const now = performance.now();
-            const t = Math.min((now - startTime) / duration, 1);
-            drone.position.lerpVectors(startPos, targetPos, t);
-
-            if (t < 1) requestAnimationFrame(animate);
-        }
-
-        animate();
+        const target = new THREE.Vector3(d.x, d.y, d.z);
+        mesh.position.lerp(target, 0.1); 
     });
+
+    requestAnimationFrame(animateDrones);
 }
+
+animateDrones();
+

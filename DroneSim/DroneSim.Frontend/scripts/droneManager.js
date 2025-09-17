@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 
+const droneData = [];
 const drones = {};
 
-function spawnDrone(scene, id, x, y, z, color = 0x0000ff) {
+function spawnDrone(scene, id, x, y, z, color) {
     if (drones[id]) return drones[id];
 
     const geometry = new THREE.SphereGeometry(0.5, 16, 16);
@@ -20,14 +21,5 @@ function updateDronePosition(id, x, y, z) {
     drone.position.set(x, y, z);
 }
 
-//mock positions for spanw test drones
-/*
-const droneData = [
-    { id: 1, x: 0, y: 1, z: 0, color: 0xff0000 },
-    { id: 2, x: 2, y: 1, z: -1, color: 0x00ff00 },
-    { id: 33, x: -2, y: 1, z: 1, color: 0x0000ff }
-];
-*/
-
-const DroneManager = { drones, spawnDrone, updateDronePosition };
+const DroneManager = { drones, droneData, spawnDrone, updateDronePosition };
 export default DroneManager;

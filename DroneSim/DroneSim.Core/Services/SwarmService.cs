@@ -20,10 +20,10 @@ namespace DroneSim.Core.Services
             {
                 _drones.Add(new Drone
                 {
-                    Id = i + 1,
-                    X = rnd.NextDouble() * 10,
-                    Y = rnd.NextDouble() * 10,
-                    Z = rnd.NextDouble() * 10
+                    id = i + 1,
+                    x = rnd.NextDouble() * 10,
+                    y = rnd.NextDouble() * 10,
+                    z = rnd.NextDouble() * 10
                 });
             }
 
@@ -32,6 +32,8 @@ namespace DroneSim.Core.Services
         #region Simulation Control
         public void StartSimulation(int refreshRate = 1)    //1 Hz by default
         {
+            InitializeSwarm();
+
             if (_timer == null)
             {
                 _timer = new Timer(1000 * refreshRate);
@@ -59,7 +61,7 @@ namespace DroneSim.Core.Services
 
         public Drone GetDroneById(int id)
         {
-            return _drones.FirstOrDefault(d => d.Id == id) ?? new Drone();
+            return _drones.FirstOrDefault(d => d.id == id) ?? new Drone();
         }
 
         public void UpdateDronePositions()

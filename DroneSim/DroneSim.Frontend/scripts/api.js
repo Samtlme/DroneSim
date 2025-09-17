@@ -1,4 +1,4 @@
-const API_BASE = 'https://localhost:6301/Api/Simulation/'; //temp dev address
+const API_BASE = 'https://localhost:7057/Api/Simulation/'; //temp dev address
 
 export async function startSimulation() {
   return apiCall('Start');
