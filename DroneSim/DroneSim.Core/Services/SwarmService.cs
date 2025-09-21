@@ -6,10 +6,15 @@ namespace DroneSim.Core.Services
 
     public class SwarmService
     {
+        private readonly PhysicsService _physics;
         private readonly List<Drone> _drones = new();
         private static Timer? _timer;
         public event Func<IEnumerable<Drone>, Task>? OnDronesUpdated;
-        
+
+        public SwarmService(PhysicsService physics)
+        {
+            _physics = physics;
+        }
         public void InitializeSwarm(int droneCount = 5) //initialize with 5 drones by default
         {
             _drones.Clear();
@@ -56,9 +61,6 @@ namespace DroneSim.Core.Services
 
         #endregion
 
-
-        public IEnumerable<Drone> GetAllDronePositions() => _drones;
-
         public Drone GetDroneById(int id)
         {
             return _drones.FirstOrDefault(d => d.id == id) ?? new Drone();
@@ -66,14 +68,8 @@ namespace DroneSim.Core.Services
 
         public void UpdateDronePositions()
         {
-            //TODO:Update position core logic
-            var rnd = new Random();
-            foreach (var drone in _drones)
-            {
-                drone.x += (rnd.NextDouble() * 1.5) * (rnd.Next(0, 2) == 0 ? -1 : 1);
-                drone.y += (rnd.NextDouble() * 1.5) * (rnd.Next(0, 2) == 0 ? -1 : 1);
-                drone.z += (rnd.NextDouble() * 1.5) * (rnd.Next(0, 2) == 0 ? -1 : 1);
-            }
+            _physics.UpdatePositions(_drones);
+
         }
 
 

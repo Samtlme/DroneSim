@@ -4,15 +4,12 @@ import * as signalR from '@microsoft/signalr';
 import DM from './droneManager.js';
 import * as THREE from 'three';
 
-
 const simulation = initSimulator('simulator-container');
 const responseEl = document.getElementById('response');
 let connection;
 
-
 document.getElementById('start').onclick = async () => {
-  const msg = await startSimulation();
-  responseEl.textContent = msg;
+  var response = await startSimulation();
   
   if(!connection)
     {
@@ -53,12 +50,10 @@ document.getElementById('start').onclick = async () => {
 
 document.getElementById('pause').onclick = async () => {
   const msg = await pauseSimulation();
-  responseEl.textContent = msg;
 };
 
 document.getElementById('update').onclick = async () => {
   const msg = await updateSimulation();
-  responseEl.textContent = msg + ' | Drones: ' + JSON.stringify(DM.drones);
 };
 
 

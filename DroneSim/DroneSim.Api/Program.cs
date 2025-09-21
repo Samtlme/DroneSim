@@ -21,6 +21,7 @@ if (builder.Environment.IsDevelopment())
 
 //DI and services
 builder.Services.AddSignalR();
+builder.Services.AddSingleton<PhysicsService>();
 builder.Services.AddSingleton<SwarmService>();
 builder.Services.AddSingleton<SwarmNotifier>();
 
