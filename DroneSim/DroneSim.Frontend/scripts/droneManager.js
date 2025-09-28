@@ -6,7 +6,7 @@ const drones = {};
 function spawnDrone(scene, id, x, y, z, color) {
     if (drones[id]) return drones[id];
 
-    const geometry = new THREE.SphereGeometry(0.5, 16, 16);
+    const geometry = new THREE.SphereGeometry(0.3, 16, 16);
     const material = new THREE.MeshStandardMaterial({ color: color });
     const drone = new THREE.Mesh(geometry, material);
     drone.position.set(x, y, z);

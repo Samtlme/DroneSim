@@ -1,5 +1,4 @@
-﻿using DroneSim.Core.Services;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 
 namespace DroneSim.Api.SignalR
 {

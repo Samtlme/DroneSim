@@ -5,11 +5,10 @@
     /// </summary>
     public static class SimulationConfig
     {
-        //Limits of the simulation area
         public static double XMax { get; set; } = 1000;
-        public static double XMin { get; set; } = -XMax;
+        public static double XMin => -XMax;
         public static double ZMax { get; set; } = 1000;
-        public static double ZMin { get; set; } = -ZMax;
+        public static double ZMin => -ZMax;
         public static double YMin { get; set; } = 15; //Ground level = 0
         public static double YMax { get; set; } = 19;
 
@@ -23,6 +22,7 @@
 
         //Simulation parameters
         public static double MinSeparationDistance { get; set; } = 50;   //Minimum distance between drones. It multiplies "PerceptionFactor".
+        public static double MinSeparationDistanceSquared => MinSeparationDistance * MinSeparationDistance; //Min Separation Squared for performance
         public static double WindForceFactor { get; set; } = 1.5; //Wind strength factor. 
 
     }

@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DroneSim.Core", "DroneSim.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DroneSim.Infrastructure", "DroneSim.Infrastructure\DroneSim.Infrastructure.csproj", "{4F4D138B-68CA-41AC-AE77-4CF6450AA3A0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DroneSim.Application", "DroneSim.Application\DroneSim.Application.csproj", "{07164A98-D5A8-4AC2-AFF2-ACBEB518E330}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{4F4D138B-68CA-41AC-AE77-4CF6450AA3A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F4D138B-68CA-41AC-AE77-4CF6450AA3A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F4D138B-68CA-41AC-AE77-4CF6450AA3A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07164A98-D5A8-4AC2-AFF2-ACBEB518E330}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07164A98-D5A8-4AC2-AFF2-ACBEB518E330}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07164A98-D5A8-4AC2-AFF2-ACBEB518E330}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07164A98-D5A8-4AC2-AFF2-ACBEB518E330}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

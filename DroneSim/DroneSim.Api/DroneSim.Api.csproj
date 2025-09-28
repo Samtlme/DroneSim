@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DroneSim.Application\DroneSim.Application.csproj" />
     <ProjectReference Include="..\DroneSim.Core\DroneSim.Core.csproj" />
   </ItemGroup>
 

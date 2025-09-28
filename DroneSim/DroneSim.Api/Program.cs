@@ -1,10 +1,11 @@
 using DroneSim.Api.SignalR;
+using DroneSim.Application.UseCases;
 using DroneSim.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-if (builder.Environment.IsDevelopment()) 
+if (builder.Environment.IsDevelopment())
 {
     builder.Services.AddCors(options =>
     {
@@ -24,6 +25,7 @@ builder.Services.AddSignalR();
 builder.Services.AddSingleton<PhysicsService>();
 builder.Services.AddSingleton<SwarmService>();
 builder.Services.AddSingleton<SwarmNotifier>();
+builder.Services.AddSingleton<SimulationManager>();
 
 
 var app = builder.Build();
@@ -37,15 +39,15 @@ if (app.Environment.IsDevelopment())
 
 app.MapHub<DronesHub>("/Api/Simulation/droneshub");
 
-app.MapPost("/Api/Simulation/Start", (SwarmService swarm) =>
+app.MapPost("/Api/Simulation/Start", (SimulationManager swarmSM) =>
 {
-    swarm.StartSimulation();
+    swarmSM.StartSimulation();
     return Results.Ok("Simulation started");
 });
 
-app.MapPost("/Api/Simulation/Pause", (SwarmService swarm) =>
+app.MapPost("/Api/Simulation/Pause", (SimulationManager swarmSM) =>
 {
-    swarm.PauseSimulation();
+    swarmSM.PauseSimulation();
     return Results.Ok("Simulation paused");
 });
 

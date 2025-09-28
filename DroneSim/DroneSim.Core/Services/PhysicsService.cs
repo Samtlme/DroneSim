@@ -7,7 +7,7 @@ namespace DroneSim.Core.Services
     {
         public void UpdatePositions(IEnumerable<Drone> drones)
         {
-            
+
             ApplyBoidsRules(drones);
 
             SimulateWindEffect(drones); //The chaos we need to tune the boids parameters
@@ -19,7 +19,7 @@ namespace DroneSim.Core.Services
         /// No alignment is implemented, neither angular velocity limits nor obstacle avoidance.
         /// </summary>
         /// <param name="drones">Drone list</param>
-        public void ApplyBoidsRules(IEnumerable<Drone> drones) 
+        public void ApplyBoidsRules(IEnumerable<Drone> drones)
         {
             foreach (var drone in drones)
             {
@@ -27,7 +27,7 @@ namespace DroneSim.Core.Services
                 var YMovement = 0.0;
                 var ZMovement = 0.0;
 
-                var neighbors = drones.Where(d => d != drone && 
+                var neighbors = drones.Where(d => d != drone &&
                                              GetDistance(d, drone) < SimulationConfig.MinSeparationDistance * SimulationConfig.PerceptionFactor)
                                       .ToList();
 
@@ -37,12 +37,12 @@ namespace DroneSim.Core.Services
                     var XDistance = drone.x - n.x;
                     var YDistance = drone.y - n.y;
                     var ZDistance = drone.z - n.z;
-                    var distanceBetween = GetDistance(drone,n);
-                    if (distanceBetween < SimulationConfig.MinSeparationDistance)
+                    var distanceBetween = GetDistanceSquared(drone, n);
+                    if (distanceBetween < SimulationConfig.MinSeparationDistanceSquared)
                     {
-                        XMovement += (XDistance / (distanceBetween * distanceBetween)) * SimulationConfig.SeparationSpeedFactor;
-                        YMovement += (YDistance / (distanceBetween * distanceBetween)) * SimulationConfig.SeparationSpeedFactor;
-                        ZMovement += (ZDistance / (distanceBetween * distanceBetween)) * SimulationConfig.SeparationSpeedFactor;
+                        XMovement += (XDistance / distanceBetween) * SimulationConfig.SeparationSpeedFactor;
+                        YMovement += (YDistance / distanceBetween) * SimulationConfig.SeparationSpeedFactor;
+                        ZMovement += (ZDistance / distanceBetween) * SimulationConfig.SeparationSpeedFactor;
                     }
                 }
 
@@ -87,6 +87,21 @@ namespace DroneSim.Core.Services
             var dy = a.y - b.y;
             var dz = a.z - b.z;
             return Math.Sqrt(dx * dx + dy * dy + dz * dz);
+        }
+
+        /// <summary>
+        /// Returns the square of the distance between two drones in 3D space.
+        /// Useful for performance optimization when comparing distances.
+        /// </summary>
+        /// <param name="a">Drone A</param>
+        /// <param name="b">Drone B</param>
+        /// <returns>Distance squared value</returns>
+        public double GetDistanceSquared(Drone a, Drone b)
+        {
+            var dx = a.x - b.x;
+            var dy = a.y - b.y;
+            var dz = a.z - b.z;
+            return dx * dx + dy * dy + dz * dz;
         }
 
         public void SimulateWindEffect(IEnumerable<Drone> drones)

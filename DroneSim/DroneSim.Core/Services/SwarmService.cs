@@ -15,7 +15,7 @@ namespace DroneSim.Core.Services
         {
             _physics = physics;
         }
-        public void InitializeSwarm(int droneCount = 1500) //initialize with 1500 drones by default
+        public void InitializeSwarm(int droneCount)
         {
             _drones.Clear();
 
@@ -35,9 +35,9 @@ namespace DroneSim.Core.Services
         }
 
         #region Simulation Control
-        public void StartSimulation(int refreshRate = 1)    //1 Hz by default
+        public void StartSimulation(int droneCount,int refreshRate)    //1 Hz by default
         {
-            InitializeSwarm();
+            InitializeSwarm(droneCount);
 
             if (_timer == null)
             {
