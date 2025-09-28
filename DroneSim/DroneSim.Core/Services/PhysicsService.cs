@@ -40,9 +40,9 @@ namespace DroneSim.Core.Services
                     var distanceBetween = GetDistance(drone,n);
                     if (distanceBetween < SimulationConfig.MinSeparationDistance)
                     {
-                        XMovement += (XDistance / distanceBetween) * SimulationConfig.SeparationSpeedFactor;
-                        YMovement += (YDistance / distanceBetween) * SimulationConfig.SeparationSpeedFactor;
-                        ZMovement += (ZDistance / distanceBetween) * SimulationConfig.SeparationSpeedFactor;
+                        XMovement += (XDistance / (distanceBetween * distanceBetween)) * SimulationConfig.SeparationSpeedFactor;
+                        YMovement += (YDistance / (distanceBetween * distanceBetween)) * SimulationConfig.SeparationSpeedFactor;
+                        ZMovement += (ZDistance / (distanceBetween * distanceBetween)) * SimulationConfig.SeparationSpeedFactor;
                     }
                 }
 
