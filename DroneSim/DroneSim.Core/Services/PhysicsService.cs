@@ -1,15 +1,14 @@
 ﻿using DroneSim.Core.Configuration;
 using DroneSim.Core.Entities;
+using System.Numerics;
 
 namespace DroneSim.Core.Services
 {
     public class PhysicsService
     {
-        public void UpdatePositions(IEnumerable<Drone> drones)
+        internal void UpdatePositions(IEnumerable<Drone> drones)
         {
-
             ApplyBoidsRules(drones);
-
             SimulateWindEffect(drones); //The chaos we need to tune the boids parameters
         }
 
@@ -19,101 +18,119 @@ namespace DroneSim.Core.Services
         /// No alignment is implemented, neither angular velocity limits nor obstacle avoidance.
         /// </summary>
         /// <param name="drones">Drone list</param>
-        public void ApplyBoidsRules(IEnumerable<Drone> drones)
+        internal void ApplyBoidsRules(IEnumerable<Drone> drones)
         {
             foreach (var drone in drones)
             {
-                var XMovement = 0.0;
-                var YMovement = 0.0;
-                var ZMovement = 0.0;
+                var movement = Vector3.Zero;
 
-                var neighbors = drones.Where(d => d != drone &&
-                                             GetDistance(d, drone) < SimulationConfig.MinSeparationDistance * SimulationConfig.PerceptionFactor)
-                                      .ToList();
+                var neighbors = drones
+                    .Where(d => d != drone &&
+                                Vector3.DistanceSquared(d.Position, drone.Position) <
+                                SimulationConfig.MinSeparationDistanceSquared * SimulationConfig.PerceptionFactor)
+                    .ToList();
 
                 //Separation
                 foreach (var n in neighbors)
                 {
-                    var XDistance = drone.x - n.x;
-                    var YDistance = drone.y - n.y;
-                    var ZDistance = drone.z - n.z;
-                    var distanceBetween = GetDistanceSquared(drone, n);
-                    if (distanceBetween < SimulationConfig.MinSeparationDistanceSquared)
+                    var offset = drone.Position - n.Position;
+                    var distanceSquared = Vector3.DistanceSquared(drone.Position, n.Position);
+
+                    if (distanceSquared < SimulationConfig.MinSeparationDistanceSquared && distanceSquared > 0)
                     {
-                        XMovement += (XDistance / distanceBetween) * SimulationConfig.SeparationSpeedFactor;
-                        YMovement += (YDistance / distanceBetween) * SimulationConfig.SeparationSpeedFactor;
-                        ZMovement += (ZDistance / distanceBetween) * SimulationConfig.SeparationSpeedFactor;
+                        movement += offset / distanceSquared * SimulationConfig.SeparationSpeedFactor;
                     }
                 }
 
                 //Cohesion
                 if (neighbors.Any())
                 {
-                    var centerX = neighbors.Average(n => n.x);
-                    var centerY = neighbors.Average(n => n.y);
-                    var centerZ = neighbors.Average(n => n.z);
+                    var neighborMassCenter = Vector3.Zero;
 
-                    XMovement += (centerX - drone.x) * SimulationConfig.CohesionSpeedFactor;
-                    YMovement += (centerY - drone.y) * SimulationConfig.CohesionSpeedFactor;
-                    ZMovement += (centerZ - drone.z) * SimulationConfig.CohesionSpeedFactor;
+                    foreach (var n in neighbors)
+                        neighborMassCenter += n.Position;
+
+                    neighborMassCenter /= neighbors.Count;
+                    movement += (neighborMassCenter - drone.Position) * SimulationConfig.CohesionSpeedFactor;
+
                 }
 
                 //Speed limit
-                var speed = Math.Sqrt(XMovement * XMovement + YMovement * YMovement + ZMovement * ZMovement);
+                var speed = movement.Length();
                 if (SimulationConfig.MaxDroneSpeedLimit > 0 && speed > SimulationConfig.MaxDroneSpeedLimit)
                 {
-                    XMovement = XMovement / speed * SimulationConfig.MaxDroneSpeedLimit;
-                    YMovement = YMovement / speed * SimulationConfig.MaxDroneSpeedLimit;
-                    ZMovement = ZMovement / speed * SimulationConfig.MaxDroneSpeedLimit;
+                    movement = Vector3.Normalize(movement) * SimulationConfig.MaxDroneSpeedLimit;
                 }
 
-                //Force drones to stay within limits
-                drone.x = Math.Clamp(drone.x + XMovement, SimulationConfig.XMin, SimulationConfig.XMax);
-                drone.y = Math.Clamp(drone.y + YMovement, SimulationConfig.YMin, SimulationConfig.YMax);
-                drone.z = Math.Clamp(drone.z + ZMovement, SimulationConfig.ZMin, SimulationConfig.ZMax);
+                drone.Position += movement;
+                ForceBoundaries(drone);
             }
         }
 
-
         /// <summary>
-        /// Returns the distance between two drones in 3D space.
+        /// Forces a drone to stay within defined simulation boundaries.
         /// </summary>
-        /// <param name="a">Drone A</param>
-        /// <param name="b">Drone B</param>
-        /// <returns>Distance value</returns>
-        public double GetDistance(Drone a, Drone b)
+        internal void ForceBoundaries(Drone drone)
         {
-            var dx = a.x - b.x;
-            var dy = a.y - b.y;
-            var dz = a.z - b.z;
-            return Math.Sqrt(dx * dx + dy * dy + dz * dz);
+            drone.Position = new Vector3(
+                Math.Clamp(drone.Position.X, SimulationConfig.XMin, SimulationConfig.XMax),
+                Math.Clamp(drone.Position.Y, SimulationConfig.YMin, SimulationConfig.YMax),
+                Math.Clamp(drone.Position.Z, SimulationConfig.ZMin, SimulationConfig.ZMax)
+            );  
         }
 
         /// <summary>
-        /// Returns the square of the distance between two drones in 3D space.
-        /// Useful for performance optimization when comparing distances.
+        /// Simulates wind effect by applying random variations to drone positions.
         /// </summary>
-        /// <param name="a">Drone A</param>
-        /// <param name="b">Drone B</param>
-        /// <returns>Distance squared value</returns>
-        public double GetDistanceSquared(Drone a, Drone b)
-        {
-            var dx = a.x - b.x;
-            var dy = a.y - b.y;
-            var dz = a.z - b.z;
-            return dx * dx + dy * dy + dz * dz;
-        }
-
-        public void SimulateWindEffect(IEnumerable<Drone> drones)
+        internal void SimulateWindEffect(IEnumerable<Drone> drones)
         {
             var rnd = new Random();
+
             foreach (var drone in drones)
             {
-                drone.x += (rnd.NextDouble() * 1.5) * (rnd.Next(0, 2) == 0 ? -1 : 1) * SimulationConfig.WindForceFactor;
-                drone.y += (rnd.NextDouble() * 1.5) * (rnd.Next(0, 2) == 0 ? -1 : 1) * SimulationConfig.WindForceFactor;
-                drone.z += (rnd.NextDouble() * 1.5) * (rnd.Next(0, 2) == 0 ? -1 : 1) * SimulationConfig.WindForceFactor;
+                var wind = new Vector3(
+                    (float)(rnd.NextDouble() * 1.5 * (rnd.Next(0, 2) == 0 ? -1 : 1)),
+                    (float)(rnd.NextDouble() * 1.5 * (rnd.Next(0, 2) == 0 ? -1 : 1)),
+                    (float)(rnd.NextDouble() * 1.5 * (rnd.Next(0, 2) == 0 ? -1 : 1))
+                );
+
+                drone.Position += wind * SimulationConfig.WindForceFactor;
+                ForceBoundaries(drone);
             }
         }
 
+        internal Vector3 CalculateCenterOfMass(IEnumerable<Drone> drones) 
+        {
+            if (!drones.Any())
+                return Vector3.Zero;
+
+            var sum = Vector3.Zero;
+            int count = 0;
+
+            foreach (var d in drones)
+            {
+                sum += d.Position;
+                count++;
+            }
+
+            return sum / count;
+        }
+
+        internal bool MoveSwarmTowardsTarget(IEnumerable<Drone> drones, Vector3 centerOfMass, Vector3 target)
+        {
+            //check if we are already at the target
+            if (Vector3.Distance(centerOfMass,target) <= SimulationConfig.TargetThreshold) { return true; }
+            var direction = target - centerOfMass;
+
+            if (direction != Vector3.Zero)
+                direction = Vector3.Normalize(direction);
+
+            foreach (var drone in drones)
+            {
+                drone.Position += direction * SimulationConfig.SwarmSpeedMultiplier;
+                ForceBoundaries(drone);
+            }
+            return false;
+        }
     }
 }

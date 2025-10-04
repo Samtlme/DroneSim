@@ -1,5 +1,6 @@
 using DroneSim.Api.SignalR;
 using DroneSim.Application.UseCases;
+using DroneSim.Core.Entities;
 using DroneSim.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,5 +52,10 @@ app.MapPost("/Api/Simulation/Pause", (SimulationManager swarmSM) =>
     return Results.Ok("Simulation paused");
 });
 
+app.MapPost("/Api/Simulation/movetotarget", (SimulationManager swarmSM, Coordinates target) =>
+{
+    swarmSM.MoveToTarget(target);
+    return Results.Ok($"Movement requested to coordinates =>  x: {target.X} y: {target.Y} z: {target.Z}");
+});
 
 app.Run();

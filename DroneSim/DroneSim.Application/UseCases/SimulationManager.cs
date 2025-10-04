@@ -1,4 +1,6 @@
-﻿using DroneSim.Core.Services;
+﻿using DroneSim.Core.Entities;
+using DroneSim.Core.Services;
+using System.Numerics;
 
 namespace DroneSim.Application.UseCases
 {
@@ -17,5 +19,7 @@ namespace DroneSim.Application.UseCases
         }
 
         public void PauseSimulation() => _swarmService.PauseSimulation();
+
+        public void MoveToTarget(Coordinates target) => _swarmService.MoveToTarget(new Vector3(target.X,target.Y, target.Z));
     }
 }

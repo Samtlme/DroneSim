@@ -1,4 +1,5 @@
 ﻿using DroneSim.Core.Entities;
+using System.Numerics;
 using Timer = System.Timers.Timer;
 
 namespace DroneSim.Core.Services
@@ -25,10 +26,11 @@ namespace DroneSim.Core.Services
             {
                 _drones.Add(new Drone
                 {
-                    id = i + 1,
-                    x = rnd.NextDouble() * 10,
-                    y = rnd.NextDouble() * 25,
-                    z = rnd.NextDouble() * 10
+                    Id = i + 1,
+                    Position = new Vector3(
+                        (float)rnd.NextDouble() * 10,
+                        (float)rnd.NextDouble() * 25,
+                        (float)rnd.NextDouble() * 10)
                 });
             }
 
@@ -61,18 +63,28 @@ namespace DroneSim.Core.Services
 
         #endregion
 
-        public Drone GetDroneById(int id)
-        {
-            return _drones.FirstOrDefault(d => d.id == id) ?? new Drone();
-        }
-
         public void UpdateDronePositions()
         {
             _physics.UpdatePositions(_drones);
+        }
+
+        public void MoveToTarget(Vector3 target)
+        {
+            //THe idea here is to move drones in the same way the center of mass would do.
+            //This works in straight line, at the moment
+
+            var centerOfMass = _physics.CalculateCenterOfMass(_drones);
+            if (_physics.MoveSwarmTowardsTarget(_drones, centerOfMass, target)) 
+            {
+                //TODO : target reached, still need to think how to correctly manage this part of the simulation
+                
+            }
 
         }
 
-
-
+        public Drone GetDroneById(int id)
+        {
+            return _drones.FirstOrDefault(d => d.Id == id) ?? new Drone();
+        }
     }
 }
