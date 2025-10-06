@@ -7,14 +7,16 @@ namespace DroneSim.Core.Services
 
     public class SwarmService
     {
-        private readonly PhysicsService _physics;
-        private readonly List<Drone> _drones = new();
         private static Timer? _timer;
+        private readonly PhysicsService _physics;
+        private readonly CommandService _commandService;
+        private readonly List<Drone> _drones = new();
         public event Func<IEnumerable<Drone>, Task>? OnDronesUpdated;
 
-        public SwarmService(PhysicsService physics)
+        public SwarmService(PhysicsService physics, CommandService commandService)
         {
             _physics = physics;
+            _commandService = commandService;
         }
         public void InitializeSwarm(int droneCount)
         {
@@ -65,22 +67,17 @@ namespace DroneSim.Core.Services
 
         public void UpdateDronePositions()
         {
+            //apply boids
             _physics.UpdatePositions(_drones);
+
+            //check for remaining commands
+            _ = _commandService.TryExecuteCommandAsync();
         }
 
-        public void MoveToTarget(Vector3 target)
-        {
-            //THe idea here is to move drones in the same way the center of mass would do.
-            //This works in straight line, at the moment
-
-            var centerOfMass = _physics.CalculateCenterOfMass(_drones);
-            if (_physics.MoveSwarmTowardsTarget(_drones, centerOfMass, target)) 
-            {
-                //TODO : target reached, still need to think how to correctly manage this part of the simulation
-                
-            }
-
-        }
+        public void ClearDroneList() => _drones.Clear();
+        public IReadOnlyList<Drone> GetDroneList => _drones;
+        public void AddDrone(Drone drone) => _drones.Add(drone);
+        public void RemoveDrone(Drone drone) => _drones.Remove(drone);
 
         public Drone GetDroneById(int id)
         {

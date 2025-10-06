@@ -1,5 +1,6 @@
 using DroneSim.Api.SignalR;
-using DroneSim.Application.UseCases;
+using DroneSim.Application.UseCases.Simulation;
+using DroneSim.Application.UseCases.Swarm;
 using DroneSim.Core.Entities;
 using DroneSim.Core.Services;
 
@@ -24,9 +25,11 @@ if (builder.Environment.IsDevelopment())
 //DI and services
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<PhysicsService>();
+builder.Services.AddSingleton<CommandService>();
 builder.Services.AddSingleton<SwarmService>();
 builder.Services.AddSingleton<SwarmNotifier>();
 builder.Services.AddSingleton<SimulationManager>();
+builder.Services.AddSingleton<SwarmCommandManager>();
 
 
 var app = builder.Build();
@@ -52,9 +55,9 @@ app.MapPost("/Api/Simulation/Pause", (SimulationManager swarmSM) =>
     return Results.Ok("Simulation paused");
 });
 
-app.MapPost("/Api/Simulation/movetotarget", (SimulationManager swarmSM, Coordinates target) =>
+app.MapPost("/Api/Simulation/movetotarget", (SwarmCommandManager swarmCM, Coordinates target) =>
 {
-    swarmSM.MoveToTarget(target);
+    swarmCM.MoveToTarget(target);
     return Results.Ok($"Movement requested to coordinates =>  x: {target.X} y: {target.Y} z: {target.Z}");
 });
 

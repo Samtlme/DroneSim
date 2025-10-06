@@ -29,5 +29,7 @@ namespace DroneSim.Core.Configuration
         public static float WindForceFactor { get; set; } = 1.5f; //Wind strength factor. 
         public static float TargetThreshold { get; set; } = 30; //Max distantance to target to consider it reached 
 
+        //Application parameters
+        public static int MaxCommandsInQueue { get; set; } = 20; //Max number of commands allowed in the queue. New commands will be ignored if reached.
     }
 }

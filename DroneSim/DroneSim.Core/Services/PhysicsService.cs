@@ -99,7 +99,7 @@ namespace DroneSim.Core.Services
             }
         }
 
-        internal Vector3 CalculateCenterOfMass(IEnumerable<Drone> drones) 
+        public Vector3 CalculateCenterOfMass(IEnumerable<Drone> drones) 
         {
             if (!drones.Any())
                 return Vector3.Zero;
@@ -116,10 +116,13 @@ namespace DroneSim.Core.Services
             return sum / count;
         }
 
-        internal bool MoveSwarmTowardsTarget(IEnumerable<Drone> drones, Vector3 centerOfMass, Vector3 target)
+        /// <summary>
+        /// Moves every drone in the swarm a little bit towards the target.
+        /// </summary>
+        /// <returns> True if swarm center of mass reaches target. False if don't.</returns>
+        public bool MoveSwarmTowardsTarget(IEnumerable<Drone> drones, Vector3 centerOfMass, Vector3 target)
         {
-            //check if we are already at the target
-            if (Vector3.Distance(centerOfMass,target) <= SimulationConfig.TargetThreshold) { return true; }
+            if (Vector3.Distance(centerOfMass,target) <= SimulationConfig.TargetThreshold) { return true; } //check if we are already at the target
             var direction = target - centerOfMass;
 
             if (direction != Vector3.Zero)
