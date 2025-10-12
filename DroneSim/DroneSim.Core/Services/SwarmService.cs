@@ -20,13 +20,13 @@ namespace DroneSim.Core.Services
         }
         public void InitializeSwarm(int droneCount)
         {
-            _drones.Clear();
+            var newDrones = new List<Drone>();
 
             //Testing purpose only
-            var rnd = new Random();    
+            var rnd = new Random();
             for (int i = 0; i < droneCount; i++)
             {
-                _drones.Add(new Drone
+                newDrones.Add(new Drone
                 {
                     Id = i + 1,
                     Position = new Vector3(
@@ -35,7 +35,13 @@ namespace DroneSim.Core.Services
                         (float)rnd.NextDouble() * 10)
                 });
             }
-
+            _commandService.ClearCommandQueue();
+            lock (_drones) 
+            {
+                _drones.Clear();
+                _drones.AddRange(newDrones);
+            }
+           
         }
 
         #region Simulation Control
@@ -45,13 +51,13 @@ namespace DroneSim.Core.Services
 
             if (_timer == null)
             {
-                _timer = new Timer(1000 * refreshRate);
+                _timer = new Timer(1000 / refreshRate);
                 _timer.Elapsed += async (sender, args) =>
                 {
                     //TODO: Beware about async calls buildup if processing takes longer than interval, need to test heavy-simulation scenarios at some point
                     UpdateDronePositions();
                     if (OnDronesUpdated != null)
-                        await OnDronesUpdated.Invoke(_drones);
+                        await OnDronesUpdated.Invoke(GetDroneList);
                 };
                 _timer.AutoReset = true;
             }
@@ -67,8 +73,10 @@ namespace DroneSim.Core.Services
 
         public void UpdateDronePositions()
         {
-            //apply boids
-            _physics.UpdatePositions(_drones);
+            lock (_drones) {
+                //apply boids
+                _physics.UpdatePositions(_drones);
+            }
 
             //check for remaining commands
             _ = _commandService.TryExecuteCommandAsync();

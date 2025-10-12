@@ -5,7 +5,7 @@ namespace DroneSim.Core.Services
 {
     public class CommandService
     {
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim _semaphore = new (1, 1);
         private PriorityQueue<ICommand, int> _commandQueue = new();
 
         /// <summary>
@@ -19,8 +19,30 @@ namespace DroneSim.Core.Services
                 if (_commandQueue.Count >= SimulationConfig.MaxCommandsInQueue)
                     return false;
 
+                var preservedCommands = new List<(ICommand Command, int Priority)>();
+
+                //Only one command per priority. Overwrite if exists
+                while (_commandQueue.TryDequeue(out var existing, out var priority))
+                {
+                    if (priority == command.Priority)
+                        continue;
+
+                    preservedCommands.Add((existing, priority));
+                }
+
+                foreach (var (cmd, prio) in preservedCommands)
+                    _commandQueue.Enqueue(cmd, prio);
+
                 _commandQueue.Enqueue(command, command.Priority);
                 return true;
+            }
+        }
+
+        public void ClearCommandQueue() 
+        {
+            lock (_commandQueue) 
+            {
+                _commandQueue.Clear();
             }
         }
 
