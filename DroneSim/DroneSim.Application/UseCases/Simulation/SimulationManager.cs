@@ -13,7 +13,7 @@ namespace DroneSim.Application.UseCases.Simulation
             _swarmService = swarmService;
         }
 
-        public void StartSimulation(int droneCount = 1500, int refreshRate = 1) //1Hz by default, 1500 drones
+        public void StartSimulation(int droneCount = 1500, int refreshRate = 60) //60Hz by default, 1500 drones
         {
             _swarmService.StartSimulation(droneCount, refreshRate);
         }

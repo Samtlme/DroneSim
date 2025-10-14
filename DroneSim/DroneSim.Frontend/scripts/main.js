@@ -1,4 +1,4 @@
-import { startSimulation, pauseSimulation, updateSimulation } from './api.js';
+import api from './api.js';
 import { Simulator } from './simulator.js';
 import * as signalR from '@microsoft/signalr';
 import DM from './droneManager.js';
@@ -10,11 +10,31 @@ const Config = {
 
 const simulation = new Simulator('simulator-container');
 let lastUpdateTime = performance.now();
-const responseEl = document.getElementById('response');
 let connection;
 
+document.getElementById('pause').onclick = async () => {
+  const msg = await api.pauseSimulation();
+};
+
+
+//test
+document.getElementById('square').onclick = async () => {
+  const msg = await api.squareFormation();
+};
+
+document.getElementById('cube').onclick = async () => {
+  const msg = await api.cubeFormation();
+};
+
+document.getElementById('reset').onclick = async () => {
+  const msg = await api.resetFormation();
+};
+
+// 
+
 document.getElementById('start').onclick = async () => {
-  var response = await startSimulation();
+  
+  await api.startSimulation();
   
   if(!connection)
   {
@@ -68,14 +88,6 @@ document.getElementById('start').onclick = async () => {
     console.error("Error connecting to hub:", err);
   }
 
-};
-
-document.getElementById('pause').onclick = async () => {
-  const msg = await pauseSimulation();
-};
-
-document.getElementById('update').onclick = async () => {
-  const msg = await updateSimulation();
 };
 
 function animateDrones() {

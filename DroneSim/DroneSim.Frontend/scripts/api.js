@@ -1,17 +1,5 @@
 const API_BASE = 'https://localhost:7057/Api/Simulation/'; //temp dev address
 
-export async function startSimulation() {
-  return apiCall('Start');
-}
-
-export async function pauseSimulation() {
-  return apiCall('Pause');
-}
-
-export async function updateSimulation() {
-  return apiCall('Update');
-}
-
 async function apiCall(endpoint) {
   try {
     const res = await fetch(`${API_BASE}${endpoint}`, { method: 'POST' });
@@ -19,4 +7,32 @@ async function apiCall(endpoint) {
   } catch (err) {
     return 'Error: ' + err;
   }
+}
+
+async function startSimulation() {
+  return apiCall('Start');
+}
+
+async function pauseSimulation() {
+  return apiCall('Pause');
+}
+
+async function squareFormation() {
+  return apiCall('Square');
+}
+
+async function cubeFormation() {
+  return apiCall('Cube');
+}
+
+async function resetFormation() {
+  return apiCall('resetFormation');
+}
+
+export default{
+  startSimulation,
+  pauseSimulation,
+  squareFormation,
+  resetFormation,
+  cubeFormation
 }

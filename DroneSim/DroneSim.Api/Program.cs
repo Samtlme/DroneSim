@@ -61,4 +61,23 @@ app.MapPost("/Api/Simulation/movetotarget", (SwarmCommandManager swarmCM, Coordi
     return Results.Ok($"Movement requested to coordinates =>  x: {target.X} y: {target.Y} z: {target.Z}");
 });
 
+app.MapPost("/Api/Simulation/resetformation", (SwarmCommandManager swarmCM) =>
+{
+    swarmCM.ResetFormation();
+    return Results.Ok($"Formation disbanded.");
+
+});
+
+app.MapPost("/Api/Simulation/Square", (SwarmCommandManager swarmCM) =>
+{
+    swarmCM.GetInSquareFormation();
+    return Results.Ok($"Square formation requested");
+});
+
+app.MapPost("/Api/Simulation/Cube", (SwarmCommandManager swarmCM) =>
+{
+    swarmCM.GetInCubeFormation();
+    return Results.Ok($"Cube formation requested");
+});
+
 app.Run();

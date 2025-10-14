@@ -20,46 +20,60 @@ namespace DroneSim.Core.Services
         /// <param name="drones">Drone list</param>
         internal void ApplyBoidsRules(IEnumerable<Drone> drones)
         {
+            var neighbors = new List<(Drone drone, float distanceSquared)>(drones.Count());
+            var MinSeparationDistanceSquared = SimulationConfig.MinSeparationDistanceSquared;
+            var PerceptionFactor = SimulationConfig.PerceptionFactor;
+            var SeparationSpeedFactor = SimulationConfig.SeparationSpeedFactor;
+            var CohesionSpeedFactor = SimulationConfig.CohesionSpeedFactor;
+            var MaxDroneSpeedLimit = SimulationConfig.MaxDroneSpeedLimit;
+
             foreach (var drone in drones)
             {
                 var movement = Vector3.Zero;
+                neighbors.Clear();
 
-                var neighbors = drones
-                    .Where(d => d != drone &&
-                                Vector3.DistanceSquared(d.Position, drone.Position) <
-                                SimulationConfig.MinSeparationDistanceSquared * SimulationConfig.PerceptionFactor)
-                    .ToList();
+                foreach (var other in drones)
+                {
+                    if (other == drone) continue;
+
+                    float distanceSquared = Vector3.DistanceSquared(drone.Position, other.Position);
+                    if (distanceSquared < MinSeparationDistanceSquared * PerceptionFactor)
+                        neighbors.Add((other, distanceSquared));
+                }
 
                 //Separation
-                foreach (var n in neighbors)
+                foreach (var (n, distanceSquared) in neighbors)
                 {
                     var offset = drone.Position - n.Position;
-                    var distanceSquared = Vector3.DistanceSquared(drone.Position, n.Position);
 
-                    if (distanceSquared < SimulationConfig.MinSeparationDistanceSquared && distanceSquared > 0)
+                    if (distanceSquared < MinSeparationDistanceSquared && distanceSquared > 0)
                     {
-                        movement += offset / distanceSquared * SimulationConfig.SeparationSpeedFactor;
+                        movement += offset / distanceSquared * SeparationSpeedFactor;
                     }
                 }
 
                 //Cohesion
-                if (neighbors.Any())
+                if (drone.PositionOffset != Vector3.Zero) 
+                {
+                    movement += (drone.PositionOffset - drone.Position) * CohesionSpeedFactor;
+                }
+                else if (neighbors.Count == 0)
                 {
                     var neighborMassCenter = Vector3.Zero;
 
-                    foreach (var n in neighbors)
+                    foreach (var (n, distanceSquared) in neighbors)
                         neighborMassCenter += n.Position;
 
                     neighborMassCenter /= neighbors.Count;
-                    movement += (neighborMassCenter - drone.Position) * SimulationConfig.CohesionSpeedFactor;
+                    movement += (neighborMassCenter - drone.Position) * CohesionSpeedFactor;
 
                 }
 
                 //Speed limit
                 var speed = movement.Length();
-                if (SimulationConfig.MaxDroneSpeedLimit > 0 && speed > SimulationConfig.MaxDroneSpeedLimit)
+                if (MaxDroneSpeedLimit > 0 && speed > MaxDroneSpeedLimit)
                 {
-                    movement = Vector3.Normalize(movement) * SimulationConfig.MaxDroneSpeedLimit;
+                    movement = Vector3.Normalize(movement) * MaxDroneSpeedLimit;
                 }
 
                 drone.Position += movement;
@@ -131,6 +145,9 @@ namespace DroneSim.Core.Services
             foreach (var drone in drones)
             {
                 drone.Position += direction * SimulationConfig.SwarmSpeedMultiplier;
+                if(drone.PositionOffset != Vector3.Zero)
+                    drone.PositionOffset += direction * SimulationConfig.SwarmSpeedMultiplier;
+
                 ForceBoundaries(drone);
             }
             return false;

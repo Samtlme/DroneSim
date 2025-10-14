@@ -1,4 +1,5 @@
-﻿using DroneSim.Core.Entities;
+﻿using DroneSim.Core.Configuration;
+using DroneSim.Core.Entities;
 using System.Numerics;
 using Timer = System.Timers.Timer;
 
@@ -8,9 +9,10 @@ namespace DroneSim.Core.Services
     public class SwarmService
     {
         private static Timer? _timer;
+        private bool _isRunning = false;
         private readonly PhysicsService _physics;
+        private readonly List<Drone> _drones = [];
         private readonly CommandService _commandService;
-        private readonly List<Drone> _drones = new();
         public event Func<IEnumerable<Drone>, Task>? OnDronesUpdated;
 
         public SwarmService(PhysicsService physics, CommandService commandService)
@@ -31,7 +33,7 @@ namespace DroneSim.Core.Services
                     Id = i + 1,
                     Position = new Vector3(
                         (float)rnd.NextDouble() * 10,
-                        (float)rnd.NextDouble() * 25,
+                        (float)rnd.NextDouble() * 25 + 15,
                         (float)rnd.NextDouble() * 10)
                 });
             }
@@ -45,7 +47,7 @@ namespace DroneSim.Core.Services
         }
 
         #region Simulation Control
-        public void StartSimulation(int droneCount,int refreshRate)    //1 Hz by default
+        public void StartSimulation(int droneCount,int refreshRate)    //2 Hz by default
         {
             InitializeSwarm(droneCount);
 
@@ -54,11 +56,22 @@ namespace DroneSim.Core.Services
                 _timer = new Timer(1000 / refreshRate);
                 _timer.Elapsed += async (sender, args) =>
                 {
-                    //TODO: Beware about async calls buildup if processing takes longer than interval, need to test heavy-simulation scenarios at some point
-                    UpdateDronePositions();
-                    if (OnDronesUpdated != null)
-                        await OnDronesUpdated.Invoke(GetDroneList);
+                    if (_isRunning) return;
+
+                    _isRunning = true;
+
+                    try
+                    {
+                        UpdateDronePositions();
+                        if (OnDronesUpdated != null)
+                            await OnDronesUpdated.Invoke(GetDroneList);
+                    }
+                    finally
+                    {
+                        _isRunning = false;
+                    }
                 };
+
                 _timer.AutoReset = true;
             }
             _timer.Start();
@@ -76,10 +89,10 @@ namespace DroneSim.Core.Services
             lock (_drones) {
                 //apply boids
                 _physics.UpdatePositions(_drones);
-            }
 
-            //check for remaining commands
-            _ = _commandService.TryExecuteCommandAsync();
+                //check for remaining commands
+                _ = _commandService.TryExecuteCommandAsync();
+            }
         }
 
         public void ClearDroneList() => _drones.Clear();

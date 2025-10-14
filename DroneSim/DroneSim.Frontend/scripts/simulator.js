@@ -41,9 +41,9 @@ export class Simulator {
         this.scene.add(this.floor);
 
         this.light = new THREE.DirectionalLight(0xffffff, 1);
-        this.light.position.set(10, 20, 10); //light position
+        this.light.position.set(0, 30, 0); //light position
         this.scene.add(this.light);
-        this.scene.add(new THREE.AmbientLight(0x404040));
+        this.scene.add(new THREE.AmbientLight(0x888888));
 
         this.raycaster = new THREE.Raycaster();
         this.mouse = new THREE.Vector2();
