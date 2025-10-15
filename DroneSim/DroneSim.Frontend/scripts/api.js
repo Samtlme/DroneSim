@@ -1,38 +1,24 @@
 const API_BASE = 'https://localhost:7057/Api/Simulation/'; //temp dev address
 
-async function apiCall(endpoint) {
+async function apiCall(endpoint, data = null) {
   try {
-    const res = await fetch(`${API_BASE}${endpoint}`, { method: 'POST' });
+    const res = await fetch(`${API_BASE}${endpoint}`,
+       { method: 'POST' ,
+         headers: {
+            'Content-Type': 'application/json'
+         },
+          body: data ? JSON.stringify(data) : undefined
+       });
     return await res.text();
   } catch (err) {
     return 'Error: ' + err;
   }
 }
 
-async function startSimulation() {
-  return apiCall('Start');
-}
-
-async function pauseSimulation() {
-  return apiCall('Pause');
-}
-
-async function squareFormation() {
-  return apiCall('Square');
-}
-
-async function cubeFormation() {
-  return apiCall('Cube');
-}
-
-async function resetFormation() {
-  return apiCall('resetFormation');
-}
-
-export default{
-  startSimulation,
-  pauseSimulation,
-  squareFormation,
-  resetFormation,
-  cubeFormation
-}
+// api.js
+export async function startSimulation() { return apiCall('Start'); }
+export async function pauseSimulation() { return apiCall('Pause'); }
+export async function squareFormation() { return apiCall('Square'); }
+export async function cubeFormation() { return apiCall('Cube'); }
+export async function resetFormation() { return apiCall('resetFormation'); }
+export async function sendFormation(points) { return apiCall('customformation', points); }

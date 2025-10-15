@@ -56,6 +56,16 @@ namespace DroneSim.Application.UseCases.Swarm
                 )
             );
         }
+        public void GetInCustomFormation(List<Coordinates> points)
+        {
+            _commandService.EnqueueCommand(
+                new CustomFormation(
+                    _swarmService,
+                    _physicsService,
+                    points.Select(x => new Vector2(x.X,x.Y)).ToList()
+                )
+            );
+        }
 
     }
 }

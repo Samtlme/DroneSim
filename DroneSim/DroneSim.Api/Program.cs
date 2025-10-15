@@ -68,6 +68,13 @@ app.MapPost("/Api/Simulation/resetformation", (SwarmCommandManager swarmCM) =>
 
 });
 
+app.MapPost("/Api/Simulation/customformation", (List<Coordinates> points, SwarmCommandManager swarmCM) =>
+{
+    swarmCM.GetInCustomFormation(points);
+    return Results.Ok($"Custom formation requested.");
+
+});
+
 app.MapPost("/Api/Simulation/Square", (SwarmCommandManager swarmCM) =>
 {
     swarmCM.GetInSquareFormation();

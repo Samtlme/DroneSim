@@ -1,12 +1,15 @@
-import api from './api.js';
+import * as api from './api.js';
 import { Simulator } from './simulator.js';
 import * as signalR from '@microsoft/signalr';
 import DM from './droneManager.js';
 import * as THREE from 'three';
+import { initDrawingCanvas } from './canvas.js';
 
 const Config = {
-  lerpMultiplier: 0.0004, //interpolation speed
+  lerpMultiplier: 0.0002, //interpolation speed
 };
+
+initDrawingCanvas('canvas-container');
 
 const simulation = new Simulator('simulator-container');
 let lastUpdateTime = performance.now();
@@ -17,7 +20,6 @@ document.getElementById('pause').onclick = async () => {
 };
 
 
-//test
 document.getElementById('square').onclick = async () => {
   const msg = await api.squareFormation();
 };
@@ -29,8 +31,6 @@ document.getElementById('cube').onclick = async () => {
 document.getElementById('reset').onclick = async () => {
   const msg = await api.resetFormation();
 };
-
-// 
 
 document.getElementById('start').onclick = async () => {
   
