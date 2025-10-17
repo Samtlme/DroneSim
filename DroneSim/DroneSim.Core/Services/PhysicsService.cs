@@ -53,7 +53,7 @@ namespace DroneSim.Core.Services
                 }
 
                 //Cohesion
-                if (drone.PositionOffset != Vector3.Zero) 
+                if (drone.PositionOffset != Vector3.Zero)
                 {
                     movement += (drone.PositionOffset - drone.Position) * CohesionSpeedFactor;
                 }
@@ -90,7 +90,7 @@ namespace DroneSim.Core.Services
                 Math.Clamp(drone.Position.X, SimulationConfig.XMin, SimulationConfig.XMax),
                 Math.Clamp(drone.Position.Y, SimulationConfig.YMin, SimulationConfig.YMax),
                 Math.Clamp(drone.Position.Z, SimulationConfig.ZMin, SimulationConfig.ZMax)
-            );  
+            );
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace DroneSim.Core.Services
             }
         }
 
-        public Vector3 CalculateCenterOfMass(IEnumerable<Drone> drones) 
+        public Vector3 CalculateCenterOfMass(IEnumerable<Drone> drones)
         {
             if (!drones.Any())
                 return Vector3.Zero;
@@ -136,7 +136,7 @@ namespace DroneSim.Core.Services
         /// <returns> True if swarm center of mass reaches target. False if don't.</returns>
         public bool MoveSwarmTowardsTarget(IEnumerable<Drone> drones, Vector3 centerOfMass, Vector3 target)
         {
-            if (Vector3.Distance(centerOfMass,target) <= SimulationConfig.TargetThreshold) { return true; } //check if we are already at the target
+            if (Vector3.Distance(centerOfMass, target) <= SimulationConfig.TargetThreshold) { return true; } //check if we are already at the target
             var direction = target - centerOfMass;
 
             if (direction != Vector3.Zero)
@@ -145,7 +145,7 @@ namespace DroneSim.Core.Services
             foreach (var drone in drones)
             {
                 drone.Position += direction * SimulationConfig.SwarmSpeedMultiplier;
-                if(drone.PositionOffset != Vector3.Zero)
+                if (drone.PositionOffset != Vector3.Zero)
                     drone.PositionOffset += direction * SimulationConfig.SwarmSpeedMultiplier;
 
                 ForceBoundaries(drone);

@@ -33,7 +33,7 @@ namespace DroneSim.Core.Services
             }
             _commandService.ClearCommandQueue();
 
-            lock (_drones) 
+            lock (_drones)
             {
                 ClearDroneList();
                 _drones.AddRange(newDrones);
@@ -41,7 +41,7 @@ namespace DroneSim.Core.Services
         }
 
         #region Simulation Control
-        public void StartSimulation(int droneCount,int refreshRate)
+        public void StartSimulation(int droneCount, int refreshRate)
         {
             InitializeSwarm(droneCount);
 
@@ -80,7 +80,8 @@ namespace DroneSim.Core.Services
 
         public void UpdateDronePositions()
         {
-            lock (_drones) {
+            lock (_drones)
+            {
                 //apply boids
                 _physics.UpdatePositions(_drones);
 

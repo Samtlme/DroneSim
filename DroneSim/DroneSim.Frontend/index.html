@@ -8,50 +8,47 @@
   <link rel="stylesheet" href="styles/main.css">
 </head>
 
+  <script src="libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="scripts/main.js"></script>
 <body>
 
-    <div class="sidebar nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-      <a class="nav-link active" id="general-tab" data-bs-toggle="pill" href="#general-tab-content" role="tab">Home</a>
-      <a class="nav-link" id="simulation-tab" data-bs-toggle="pill" href="#simulation-tab-content" role="tab">Drone Simulator</a>
-    </div>
+  <div class="sidebar nav flex-row nav-pills" id="v-pills-tab" role="tablist">
+    <a class="nav-link active" id="simulation-tab" data-bs-toggle="pill" href="#simulation-tab-content" role="tab">Drone Simulator</a>
+    <a class="nav-link" id="config-tab" data-bs-toggle="pill" href="#config-tab-content" role="tab">Configuration</a>
+  </div>
 
-    <div class="content tab-content" id="v-pills-tabContent">
-      <div class="tab-pane fade show active" id="general-tab-content" role="tabpanel">
-        General instructions
-        General instructions
-        General instructions
-        General instructions
-        General instructions
-        General instructions
-      </div>
+  <div class="content tab-content" id="v-pills-tabContent">
+    <div class="tab-pane fade" id="config-tab-content" role="tabpanel">
+      HERE GOES CONFIGURATION TAB
 
-      <div class="tab-pane fade" id="simulation-tab-content" role="tabpanel">
-
-        <div class="container">
-          <div class="d-flex align-items-center justify-content-between mb-3">
-            <h1 class="mb-0">Drone Simulator</h1>
-            <div class="btn-group">
-              <button id="start" class="btn btn-success">Start Simulation</button>
-              <button id="pause" class="btn btn-warning">Pause Simulation</button>
-              <button id="square" class="btn btn-primary">square</button>
-              <button id="cube" class="btn btn-primary">cube</button>
-              <button id="reset" class="btn btn-primary">Reset</button>
-            </div>
-
-          </div>
-
-          <!-- Simulator -->
-          <div id="simulator-container"></div>
-
-          <div id="canvas-container"></div>
         
-        </div>
-      </div>
 
     </div>
 
-    <!-- Scripts -->
-    <script src="libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="scripts/main.js"></script>
+    <div class="tab-pane fade show active" id="simulation-tab-content" role="tabpanel">
+
+    <div class="d-flex mt-3" style="height: 100%;">
+      <div class="btn-group-vertical align-self-start" style="width: auto;">
+
+        <button class="btn btn-label" disabled>Simulation control</button>
+        <button id="start" class="btn">Start<i class="bi bi-play ms-2 fs-4"></i></button>
+        <button id="pause" class="btn">Pause<i class="bi bi-pause-fill ms-2 fs-4"></i></button>
+
+        <button class="btn btn-label" disabled>Formations</button>
+        <button id="square" class="btn">Square<i class="bi bi-square ms-2 fs-5"></i></button>
+        <button id="cube" class="btn">Cube<i class="bi bi-box ms-2 fs-4"></i></button>
+        <div class="btn-wrapper">
+          <button id="customFormation" class="btn">Custom<i class="bi bi-pencil-square ms-2 fs-4"></i></button>
+          <div class="hover-panel">
+            <div id="canvas-container"></div>
+          </div>
+        </div>
+        <button id="reset" class="btn">Disband <i class="bi bi-x ms-2 fs-4"></i></button>
+
+      </div>
+      <div id="simulator-container"></div>
+    </div>
+  </div>
+  </div>
 </body>
 </html>

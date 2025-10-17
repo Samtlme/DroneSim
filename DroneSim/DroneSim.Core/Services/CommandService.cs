@@ -5,7 +5,7 @@ namespace DroneSim.Core.Services
 {
     public class CommandService
     {
-        private readonly SemaphoreSlim _semaphore = new (1, 1);
+        private readonly SemaphoreSlim _semaphore = new(1, 1);
         private PriorityQueue<ICommand, int> _commandQueue = new();
 
         /// <summary>
@@ -38,9 +38,9 @@ namespace DroneSim.Core.Services
             }
         }
 
-        public void ClearCommandQueue() 
+        public void ClearCommandQueue()
         {
-            lock (_commandQueue) 
+            lock (_commandQueue)
             {
                 _commandQueue.Clear();
             }

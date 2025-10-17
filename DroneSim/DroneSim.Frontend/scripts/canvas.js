@@ -4,15 +4,24 @@ export function initDrawingCanvas(containerId) {
   const container = document.getElementById(containerId);
 
   const canvas = document.createElement("canvas");
+  canvas.width = 465;
+  canvas.height = 230;
+  const btnOptions = document.createElement("div");
+  btnOptions.style.display = "flex";
+  btnOptions.style.gap = "10px";
+  btnOptions.style.justifyContent = "center";
   const clearBtn = document.createElement("button");
-  clearBtn.textContent = "Reset";
+  clearBtn.classList.add("btn", "btn-primary");
+  clearBtn.textContent = "Clear";
   const sendBtn = document.createElement("button");
+  sendBtn.classList.add("btn");
   sendBtn.textContent = "Send";
 
   container.appendChild(canvas);
   container.appendChild(document.createElement("br"));
-  container.appendChild(clearBtn);
-  container.appendChild(sendBtn);
+  btnOptions.appendChild(clearBtn);
+  btnOptions.appendChild(sendBtn);
+  container.appendChild(btnOptions);
 
   const ctx = canvas.getContext("2d");
   ctx.lineWidth = 5;

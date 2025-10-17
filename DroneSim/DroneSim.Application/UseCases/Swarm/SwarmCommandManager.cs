@@ -11,20 +11,20 @@ namespace DroneSim.Application.UseCases.Swarm
         private readonly CommandService _commandService = commandService;
         private readonly SwarmService _swarmService = swarmService;
 
-        public void ResetFormation() 
+        public void ResetFormation()
         {
-            foreach (var drone in _swarmService.GetDroneList) 
+            foreach (var drone in _swarmService.GetDroneList)
             {
                 drone.PositionOffset = Vector3.Zero;
             }
         }
 
-        public void MoveToTarget(Coordinates target) 
+        public void MoveToTarget(Coordinates target)
         {
             _commandService.EnqueueCommand(
                 new MoveToTarget(
                     _swarmService,
-                    _physicsService, 
+                    _physicsService,
                     new Vector3() { X = target.X, Y = target.Y, Z = target.Z }
                 )
             );
@@ -54,7 +54,7 @@ namespace DroneSim.Application.UseCases.Swarm
             _commandService.EnqueueCommand(
                 new CustomFormation(
                     _swarmService,
-                    points.Select(x => new Vector2(x.X,x.Y)).ToList()
+                    points.Select(x => new Vector2(x.X, x.Y)).ToList()
                 )
             );
         }

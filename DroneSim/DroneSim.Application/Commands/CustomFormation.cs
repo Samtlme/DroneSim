@@ -25,16 +25,18 @@ namespace DroneSim.Application.Commands
             var pointCount = _points.Count;
             var droneCount = drones.Count;
 
-            if (pointCount < 2 || droneCount < 1) {
-                return Task.FromResult(true); 
+            if (pointCount < 2 || droneCount < 1)
+            {
+                return Task.FromResult(true);
             }
 
             var totalDistance = 0f;
             for (int i = 1; i < pointCount; i++)
                 totalDistance += Vector2.Distance(_points[i - 1], _points[i]);
 
-            if (totalDistance <= 0f) {
-                return Task.FromResult(true); 
+            if (totalDistance <= 0f)
+            {
+                return Task.FromResult(true);
             }
 
             var distanceNeeded = (droneCount - 1) * SimulationConfig.MinSeparationDistance;

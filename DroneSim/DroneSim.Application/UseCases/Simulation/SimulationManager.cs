@@ -17,6 +17,6 @@ namespace DroneSim.Application.UseCases.Simulation
         }
 
         public void PauseSimulation() => _swarmService.PauseSimulation();
-        
+
     }
 }

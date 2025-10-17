@@ -10,7 +10,8 @@ public class SwarmNotifier
         swarm.OnDronesUpdated += async (drones) =>
         {
             var dtoList = new List<DroneDto>();
-            lock (drones) {
+            lock (drones)
+            {
                 dtoList = drones.Select(x => new DroneDto()
                 {
                     Id = x.Id,
