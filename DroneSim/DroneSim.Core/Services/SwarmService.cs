@@ -1,25 +1,19 @@
-﻿using DroneSim.Core.Configuration;
-using DroneSim.Core.Entities;
+﻿using DroneSim.Core.Entities;
 using System.Numerics;
 using Timer = System.Timers.Timer;
 
 namespace DroneSim.Core.Services
 {
 
-    public class SwarmService
+    public class SwarmService(PhysicsService physics, CommandService commandService)
     {
         private static Timer? _timer;
         private bool _isRunning = false;
-        private readonly PhysicsService _physics;
         private readonly List<Drone> _drones = [];
-        private readonly CommandService _commandService;
+        private readonly PhysicsService _physics = physics;
         public event Func<IEnumerable<Drone>, Task>? OnDronesUpdated;
+        private readonly CommandService _commandService = commandService;
 
-        public SwarmService(PhysicsService physics, CommandService commandService)
-        {
-            _physics = physics;
-            _commandService = commandService;
-        }
         public void InitializeSwarm(int droneCount)
         {
             var newDrones = new List<Drone>();
@@ -38,16 +32,16 @@ namespace DroneSim.Core.Services
                 });
             }
             _commandService.ClearCommandQueue();
+
             lock (_drones) 
             {
-                _drones.Clear();
+                ClearDroneList();
                 _drones.AddRange(newDrones);
             }
-           
         }
 
         #region Simulation Control
-        public void StartSimulation(int droneCount,int refreshRate)    //2 Hz by default
+        public void StartSimulation(int droneCount,int refreshRate)
         {
             InitializeSwarm(droneCount);
 
@@ -100,9 +94,5 @@ namespace DroneSim.Core.Services
         public void AddDrone(Drone drone) => _drones.Add(drone);
         public void RemoveDrone(Drone drone) => _drones.Remove(drone);
 
-        public Drone GetDroneById(int id)
-        {
-            return _drones.FirstOrDefault(d => d.Id == id) ?? new Drone();
-        }
     }
 }

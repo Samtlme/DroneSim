@@ -6,7 +6,6 @@ using DroneSim.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 if (builder.Environment.IsDevelopment())
 {
     builder.Services.AddCors(options =>
@@ -21,7 +20,6 @@ if (builder.Environment.IsDevelopment())
     });
 }
 
-
 //DI and services
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<PhysicsService>();
@@ -30,7 +28,6 @@ builder.Services.AddSingleton<SwarmService>();
 builder.Services.AddSingleton<SwarmNotifier>();
 builder.Services.AddSingleton<SimulationManager>();
 builder.Services.AddSingleton<SwarmCommandManager>();
-
 
 var app = builder.Build();
 
@@ -43,6 +40,8 @@ if (app.Environment.IsDevelopment())
 
 app.MapHub<DronesHub>("/Api/Simulation/droneshub");
 
+#region Simulation Control
+
 app.MapPost("/Api/Simulation/Start", (SimulationManager swarmSM) =>
 {
     swarmSM.StartSimulation();
@@ -54,6 +53,10 @@ app.MapPost("/Api/Simulation/Pause", (SimulationManager swarmSM) =>
     swarmSM.PauseSimulation();
     return Results.Ok("Simulation paused");
 });
+
+#endregion
+
+#region Commands and Formations
 
 app.MapPost("/Api/Simulation/movetotarget", (SwarmCommandManager swarmCM, Coordinates target) =>
 {
@@ -86,5 +89,7 @@ app.MapPost("/Api/Simulation/Cube", (SwarmCommandManager swarmCM) =>
     swarmCM.GetInCubeFormation();
     return Results.Ok($"Cube formation requested");
 });
+
+#endregion
 
 app.Run();

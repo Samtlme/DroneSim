@@ -4,20 +4,12 @@ using DroneSim.Core.Services;
 
 namespace DroneSim.Application.Commands
 {
-    internal class CubeFormation : ICommand
+    internal class CubeFormation(SwarmService swarm, PhysicsService physics) : ICommand
     {
-        private readonly SwarmService _swarm;
-        private readonly PhysicsService _physics;
+        private readonly SwarmService _swarm = swarm;
+        private readonly PhysicsService _physics = physics;
         public int Priority { get; } = 3;
-        private bool _isCompleted = false;
-        public string Name { get; } = "Square Formation";
-
-        public bool IsCompleted => _isCompleted;
-        public CubeFormation(SwarmService swarm, PhysicsService physics)
-        {
-            _swarm = swarm;
-            _physics = physics;
-        }
+        public string Name { get; } = "Cube Formation";
 
         public Task<bool> ExecuteAsync()
         {

@@ -10,7 +10,6 @@ namespace DroneSim.Core.Interfaces
     {
         int Priority { get; }
         string Name { get; }
-        bool IsCompleted { get; }
         Task<bool> ExecuteAsync();
     }
 }

@@ -5,18 +5,11 @@ using System.Numerics;
 
 namespace DroneSim.Application.UseCases.Swarm
 {
-    public class SwarmCommandManager
+    public class SwarmCommandManager(PhysicsService physicsService, CommandService commandService, SwarmService swarmService)
     {
-        private readonly PhysicsService _physicsService;
-        private readonly CommandService _commandService;
-        private readonly SwarmService _swarmService;
-
-        public SwarmCommandManager(PhysicsService physicsService, CommandService commandService, SwarmService swarmService)
-        {
-            _physicsService = physicsService;
-            _commandService = commandService;
-            _swarmService = swarmService;
-        }
+        private readonly PhysicsService _physicsService = physicsService;
+        private readonly CommandService _commandService = commandService;
+        private readonly SwarmService _swarmService = swarmService;
 
         public void ResetFormation() 
         {
@@ -61,7 +54,6 @@ namespace DroneSim.Application.UseCases.Swarm
             _commandService.EnqueueCommand(
                 new CustomFormation(
                     _swarmService,
-                    _physicsService,
                     points.Select(x => new Vector2(x.X,x.Y)).ToList()
                 )
             );

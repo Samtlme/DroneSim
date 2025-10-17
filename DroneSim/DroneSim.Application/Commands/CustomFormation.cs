@@ -5,23 +5,12 @@ using System.Numerics;
 
 namespace DroneSim.Application.Commands
 {
-    internal class CustomFormation : ICommand
+    internal class CustomFormation(SwarmService swarm, List<Vector2> points) : ICommand
     {
-        private readonly SwarmService _swarm;
-        private readonly PhysicsService _physics;
-        private List<Vector2> _points;
+        private readonly SwarmService _swarm = swarm;
+        private List<Vector2> _points = points;
         public int Priority { get; } = 3;
-        private bool _isCompleted = false;
         public string Name { get; } = "Custom Formation";
-
-        public bool IsCompleted => _isCompleted;
-        public CustomFormation(SwarmService swarm, PhysicsService physics, List<Vector2> points)
-        {
-            _points = points;
-            _swarm = swarm;
-            _physics = physics;
-        }
-
         public Task<bool> ExecuteAsync()
         {
             //1) We get the distance we have(points) and the distance we need(drones)
@@ -37,7 +26,7 @@ namespace DroneSim.Application.Commands
             var droneCount = drones.Count;
 
             if (pointCount < 2 || droneCount < 1) {
-                return Task.FromResult(false); 
+                return Task.FromResult(true); 
             }
 
             var totalDistance = 0f;
@@ -45,7 +34,7 @@ namespace DroneSim.Application.Commands
                 totalDistance += Vector2.Distance(_points[i - 1], _points[i]);
 
             if (totalDistance <= 0f) {
-                return Task.FromResult(false); 
+                return Task.FromResult(true); 
             }
 
             var distanceNeeded = (droneCount - 1) * SimulationConfig.MinSeparationDistance;

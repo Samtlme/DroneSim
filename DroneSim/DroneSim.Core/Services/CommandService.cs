@@ -87,7 +87,5 @@ namespace DroneSim.Core.Services
             }
         }
 
-
-
     }
 }

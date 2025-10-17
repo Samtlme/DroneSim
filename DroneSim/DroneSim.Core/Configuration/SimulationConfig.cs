@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace DroneSim.Core.Configuration
+﻿namespace DroneSim.Core.Configuration
 {
     /// <summary>
     /// This class holds configuration settings for the simulation environment.
@@ -12,13 +10,12 @@ namespace DroneSim.Core.Configuration
         public static float ZMax { get; set; } = 1000;
         public static float ZMin => -ZMax;
         public static float YMin { get; set; } = 7; //Ground level = 0
-        public static float YMax { get; set; } = 50;
-
+        public static float YMax { get; set; } = 100;
 
         //Simulation speed parameters
-        public static float CohesionSpeedFactor { get; set; } = 0.4f; //Fraction(0-1) of the distance to the center of mass to move EACH UPDATE CYCLE. For example, 0.1 means drones will move 10% of the distance to the center of mass each update.
-        public static float SeparationSpeedFactor { get; set; } = 0.7f; //Contribution to separation vector on EACH UPDATE CYCLE. Higher values make drones separate faster.
-        public static float MaxDroneSpeedLimit { get; set; } = 0; //Maximum drone speed units on EACH UPDATE. 0 Means no limit.
+        public static float CohesionSpeedFactor { get; set; } = 0.3f; //Fraction(0-1) of the distance to the center of mass to move EACH UPDATE CYCLE. For example, 0.1 means drones will move 10% of the distance to the center of mass each update.
+        public static float SeparationSpeedFactor { get; set; } = 0.9f; //Contribution to separation vector on EACH UPDATE CYCLE. Higher values make drones separate faster.
+        public static float MaxDroneSpeedLimit { get; set; } = 1; //Maximum drone speed units on EACH UPDATE. 0 Means no limit.
         public static float SwarmSpeedMultiplier { get; set; } = 5; //Maximum swarm speed units on EACH UPDATE. 0 Means no limit.
         public static float PerceptionFactor { get; set; } = float.MaxValue; //How many times the "MinSeparationDistance" to define which drones are considered as neighbors. Low values can make drones get separated from the rest.
 
@@ -27,7 +24,7 @@ namespace DroneSim.Core.Configuration
         public static float MinSeparationDistance { get; set; } = 3;   //Minimum distance between drones. It multiplies "PerceptionFactor".
         public static float MinSeparationDistanceSquared => MinSeparationDistance * MinSeparationDistance; //Min Separation Squared for performance
         public static float WindForceFactor { get; set; } = 0.2f; //Wind strength factor. 
-        public static float TargetThreshold { get; set; } = 30; //Max distantance to target to consider it reached 
+        public static float TargetThreshold { get; set; } = 20; //Max distantance to target to consider it reached 
 
         //Application parameters
         public static int MaxCommandsInQueue { get; set; } = 20; //Max number of commands allowed in the queue. New commands will be ignored if reached.

@@ -1,27 +1,16 @@
-﻿using DroneSim.Core.Entities;
-using DroneSim.Core.Interfaces;
+﻿using DroneSim.Core.Interfaces;
 using DroneSim.Core.Services;
 using System.Numerics;
 
 namespace DroneSim.Application.Commands
 {
-    public class MoveToTarget : ICommand
+    public class MoveToTarget(SwarmService swarm, PhysicsService physics, Vector3 target) : ICommand
     {
-        private readonly Vector3 _target;
-        private readonly SwarmService _swarm;
-        private readonly PhysicsService _physics;
+        private readonly Vector3 _target = target;
+        private readonly SwarmService _swarm = swarm;
+        private readonly PhysicsService _physics = physics;
         public int Priority { get; } = 5;
-        private bool _isCompleted = false;
         public string Name { get; } = "Move to target";
-
-        public bool IsCompleted => _isCompleted;
-        public MoveToTarget(SwarmService swarm, PhysicsService physics, Vector3 target)
-        {
-            _target = target;
-            _swarm = swarm;
-            _physics = physics;
-        }
-
         public Task<bool> ExecuteAsync()
         {
             var centerOfMass = _physics.CalculateCenterOfMass(_swarm.GetDroneList);

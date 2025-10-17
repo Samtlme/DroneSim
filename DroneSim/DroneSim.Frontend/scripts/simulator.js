@@ -31,7 +31,7 @@ export class Simulator {
         this.controls.maxPolarAngle = Math.PI / 2;   //Angle limit
         //zoom min-max
         this.controls.minDistance = 10;
-        this.controls.maxDistance = 200;
+        this.controls.maxDistance = 300;
         
         //provisional floor
         this.floorGeometry = new THREE.BoxGeometry(200, 1, 200);
@@ -55,7 +55,6 @@ export class Simulator {
         this.animate();
     }
 
-    //Animation loop, future FPS counter implementation goes here
     animate(){
         requestAnimationFrame(this.animate.bind(this));
         this.controls.update(); //needed for damping

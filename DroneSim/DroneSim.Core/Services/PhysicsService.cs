@@ -36,7 +36,7 @@ namespace DroneSim.Core.Services
                 {
                     if (other == drone) continue;
 
-                    float distanceSquared = Vector3.DistanceSquared(drone.Position, other.Position);
+                    var distanceSquared = Vector3.DistanceSquared(drone.Position, other.Position);
                     if (distanceSquared < MinSeparationDistanceSquared * PerceptionFactor)
                         neighbors.Add((other, distanceSquared));
                 }
@@ -57,7 +57,7 @@ namespace DroneSim.Core.Services
                 {
                     movement += (drone.PositionOffset - drone.Position) * CohesionSpeedFactor;
                 }
-                else if (neighbors.Count == 0)
+                else if (neighbors.Count != 0)
                 {
                     var neighborMassCenter = Vector3.Zero;
 
@@ -103,9 +103,9 @@ namespace DroneSim.Core.Services
             foreach (var drone in drones)
             {
                 var wind = new Vector3(
-                    (float)(rnd.NextDouble() * 1.5 * (rnd.Next(0, 2) == 0 ? -1 : 1)),
-                    (float)(rnd.NextDouble() * 1.5 * (rnd.Next(0, 2) == 0 ? -1 : 1)),
-                    (float)(rnd.NextDouble() * 1.5 * (rnd.Next(0, 2) == 0 ? -1 : 1))
+                    (float)(rnd.NextDouble() * (rnd.Next(0, 2) == 0 ? -1 : 1)),
+                    (float)(rnd.NextDouble() * (rnd.Next(0, 2) == 0 ? -1 : 1)),
+                    (float)(rnd.NextDouble() * (rnd.Next(0, 2) == 0 ? -1 : 1))
                 );
 
                 drone.Position += wind * SimulationConfig.WindForceFactor;

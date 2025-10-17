@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { initDrawingCanvas } from './canvas.js';
 
 const Config = {
-  lerpMultiplier: 0.0002, //interpolation speed
+  lerpMultiplier: 1, //interpolation speed
 };
 
 initDrawingCanvas('canvas-container');
@@ -18,7 +18,6 @@ let connection;
 document.getElementById('pause').onclick = async () => {
   const msg = await api.pauseSimulation();
 };
-
 
 document.getElementById('square').onclick = async () => {
   const msg = await api.squareFormation();
@@ -44,7 +43,6 @@ document.getElementById('start').onclick = async () => {
     .build();
 
     connection.on("UpdateDrones", (apiDrones) => {
-      const now = performance.now();
       const currentIdsSet = new Set(apiDrones.map(d => d.id));
 
       for (const id in DM.drones) {
@@ -93,6 +91,7 @@ document.getElementById('start').onclick = async () => {
 function animateDrones() {
   const now = performance.now();
   const deltaTime = (now - lastUpdateTime) / 1000;
+  lastUpdateTime = now;
   const lerpSpeed = Math.min(1, deltaTime * Config.lerpMultiplier);
 
   DM.droneData.forEach(d => {
