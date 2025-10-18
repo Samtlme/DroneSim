@@ -21,5 +21,11 @@ function updateDronePosition(id, x, y, z) {
     drone.position.set(x, y, z);
 }
 
-const DroneManager = { drones, droneData, spawnDrone, updateDronePosition };
+function ChangeDronesSize(value) {
+    Object.values(drones).forEach(drone => {
+        drone.scale.set(value, value, value);
+    });
+}
+
+const DroneManager = { drones, droneData, spawnDrone, updateDronePosition, ChangeDronesSize };
 export default DroneManager;

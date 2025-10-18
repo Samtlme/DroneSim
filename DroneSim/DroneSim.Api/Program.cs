@@ -54,6 +54,19 @@ app.MapPost("/Api/Simulation/Pause", (SimulationManager swarmSM) =>
     return Results.Ok("Simulation paused");
 });
 
+app.MapPost("/Api/Simulation/setConfig", (SimulationManager swarmSM, SimulationConfigDto newConfig) =>
+{
+    try
+    {
+        swarmSM.setConfiguration(newConfig);
+        return Results.Ok("Settings modified");
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(detail:"Failed to apply configuration: " + ex.Message, statusCode: 400);
+    }
+});
+
 #endregion
 
 #region Commands and Formations

@@ -19,6 +19,12 @@ body {
   font-family: "Helvetica", "Arial", sans-serif;
 }
 
+.config-tab {
+  max-width: 80%;
+  padding: 1%;
+  margin-left: 0;
+}
+
 .sidebar {
   position: fixed;
   top: 0;
@@ -59,7 +65,7 @@ body {
 }
 
 .content {
-  margin-top: 6vh;
+  margin-top: 5vh;
   height: 100vh;
   overflow-y: auto;
   background: var(--bg-color);
@@ -68,7 +74,7 @@ body {
 
 #simulator-container {
   width: 95%;
-  height: 90vh;
+  height: 89vh;
   background: var(--bg-color);
   border: 1px solid #212529;
   margin-top: 0px;
@@ -76,6 +82,7 @@ body {
   flex-grow: 1;
 }
 
+.btn-group .btn,
 .btn-group-vertical .btn {
   padding: 0px;
   width: 140px;
@@ -95,12 +102,14 @@ body {
   justify-content: center;
 }
 
+.btn-group .btn:hover,
 .btn-group-vertical .btn:hover {
   background-color: var(--accent);
   transform: translateY(-2px);
   box-shadow: 0 5px 10px rgba(0,0,0,0.15);
 }
 
+.btn-group.btn:active,
 .btn-group-vertical .btn:active {
   transform: translateY(0);
   box-shadow: 0 3px 6px rgba(0,0,0,0.1);
@@ -143,15 +152,17 @@ body {
   width: 500px;
   height: 300px;
   background: var(--bg-color);
-  border: 1px solid #ccc;
+  border: 1px solid #000;
   box-shadow: 0 5px 15px rgba(0,0,0,0.2);
   display: none;
   z-index: 1000;
   padding: 1rem;
+  opacity: 0;
 }
 
 .btn-wrapper:hover .hover-panel {
   display: block;
+  opacity: 1;
 }
 
 canvas{

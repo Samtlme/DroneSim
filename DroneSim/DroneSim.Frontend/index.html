@@ -6,10 +6,11 @@
   <title>Drone Simulator</title>
   <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="styles/main.css">
+  <script src="libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="scripts/main.js" defer></script>
 </head>
 
-  <script src="libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script type="module" src="scripts/main.js"></script>
+
 <body>
 
   <div class="sidebar nav flex-row nav-pills" id="v-pills-tab" role="tablist">
@@ -18,37 +19,54 @@
   </div>
 
   <div class="content tab-content" id="v-pills-tabContent">
-    <div class="tab-pane fade" id="config-tab-content" role="tabpanel">
-      HERE GOES CONFIGURATION TAB
+    <div class="tab-pane fade config-tab" id="config-tab-content" role="tabpanel">
+		<div style="display: flex; gap: 50px;"> 
 
-        
+			<div style="flex: 1;">
+				<h2 class="mb-4">
+					<i class="bi bi-gear-fill"></i> 
+					Configuration
+				</h2>
+				<div id="config-options"></div>
+				<div class="btn-group gap-2 d-flex mt-3">
+					<button id="resetDefaults" class="btn">Reset Values<i class="bi bi-arrow-counterclockwise ms-2 fs-5"></i></button>
+					<button id="applyConfig" class="btn btn-primary">Apply<i class="bi bi-check2 ms-2 fs-5"></i></button>
+				</div>
+			</div>
 
+			<div style="flex: 1;">
+				<h2 class="mb-4">
+					<i class="bi bi-gear-fill"></i> 
+					Simulator Options
+				</h2>
+				<div id="simulator-options"></div>
+			</div>
+
+		</div>
     </div>
 
     <div class="tab-pane fade show active" id="simulation-tab-content" role="tabpanel">
+      <div class="d-flex mt-3" style="height: 100%;">
+        <div class="btn-group-vertical align-self-start" style="width: auto;">
+          <button class="btn btn-label" disabled>Simulation control</button>
+          <button id="start" class="btn">Start<i class="bi bi-play ms-2 fs-4"></i></button>
+          <button id="pause" class="btn">Pause<i class="bi bi-pause-fill ms-2 fs-4"></i></button>
 
-    <div class="d-flex mt-3" style="height: 100%;">
-      <div class="btn-group-vertical align-self-start" style="width: auto;">
-
-        <button class="btn btn-label" disabled>Simulation control</button>
-        <button id="start" class="btn">Start<i class="bi bi-play ms-2 fs-4"></i></button>
-        <button id="pause" class="btn">Pause<i class="bi bi-pause-fill ms-2 fs-4"></i></button>
-
-        <button class="btn btn-label" disabled>Formations</button>
-        <button id="square" class="btn">Square<i class="bi bi-square ms-2 fs-5"></i></button>
-        <button id="cube" class="btn">Cube<i class="bi bi-box ms-2 fs-4"></i></button>
-        <div class="btn-wrapper">
-          <button id="customFormation" class="btn">Custom<i class="bi bi-pencil-square ms-2 fs-4"></i></button>
-          <div class="hover-panel">
-            <div id="canvas-container"></div>
+          <button class="btn btn-label" disabled>Formations</button>
+          <button id="square" class="btn">Square<i class="bi bi-square ms-2 fs-5"></i></button>
+          <button id="cube" class="btn">Cube<i class="bi bi-box ms-2 fs-4"></i></button>
+          <div class="btn-wrapper">
+            <button id="customFormation" class="btn">Custom<i class="bi bi-pencil-square ms-2 fs-4"></i></button>
+            <div class="hover-panel">
+              <div id="canvas-container"></div>
+            </div>
           </div>
+          <button id="reset" class="btn">Disband <i class="bi bi-x ms-2 fs-4"></i></button>
         </div>
-        <button id="reset" class="btn">Disband <i class="bi bi-x ms-2 fs-4"></i></button>
-
+        <div id="simulator-container"></div>
       </div>
-      <div id="simulator-container"></div>
     </div>
-  </div>
+
   </div>
 </body>
 </html>
