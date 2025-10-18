@@ -3,6 +3,7 @@ using DroneSim.Application.UseCases.Simulation;
 using DroneSim.Application.UseCases.Swarm;
 using DroneSim.Core.Entities;
 using DroneSim.Core.Services;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,9 +43,9 @@ app.MapHub<DronesHub>("/Api/Simulation/droneshub");
 
 #region Simulation Control
 
-app.MapPost("/Api/Simulation/Start", (SimulationManager swarmSM) =>
+app.MapPost("/Api/Simulation/Start", (SimulationManager swarmSM, [FromBody] int droneCount) =>
 {
-    swarmSM.StartSimulation();
+    swarmSM.StartSimulation(droneCount);
     return Results.Ok("Simulation started");
 });
 

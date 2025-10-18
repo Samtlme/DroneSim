@@ -48,20 +48,26 @@
     <div class="tab-pane fade show active" id="simulation-tab-content" role="tabpanel">
       <div class="d-flex mt-3" style="height: 100%;">
         <div class="btn-group-vertical align-self-start" style="width: auto;">
-          <button class="btn btn-label" disabled>Simulation control</button>
-          <button id="start" class="btn">Start<i class="bi bi-play ms-2 fs-4"></i></button>
-          <button id="pause" class="btn">Pause<i class="bi bi-pause-fill ms-2 fs-4"></i></button>
+		
+			<button class="btn btn-label" disabled>Simulation control</button>
+			<div class="d-flex align-items-center m-2">
+				<label class="me-2 mb-0 fw-bold" style="font-size: 11px; width: 40px;">Drone Count</label>
+				<input type="text" id="droneCount" class="form-control form-control-sm dronecount-input" maxlength="4" autocomplete="off" placeholder="e.g. 100"/>
+			</div>
 
-          <button class="btn btn-label" disabled>Formations</button>
-          <button id="square" class="btn">Square<i class="bi bi-square ms-2 fs-5"></i></button>
-          <button id="cube" class="btn">Cube<i class="bi bi-box ms-2 fs-4"></i></button>
-          <div class="btn-wrapper">
-            <button id="customFormation" class="btn">Custom<i class="bi bi-pencil-square ms-2 fs-4"></i></button>
-            <div class="hover-panel">
-              <div id="canvas-container"></div>
-            </div>
-          </div>
-          <button id="reset" class="btn">Disband <i class="bi bi-x ms-2 fs-4"></i></button>
+			<button id="start" class="btn">Start<i class="bi bi-play ms-2 fs-4"></i></button>
+			<button id="pause" class="btn">Pause<i class="bi bi-pause-fill ms-2 fs-4"></i></button>
+
+			<button class="btn btn-label" disabled>Formations</button>
+			<button id="square" class="btn">Square<i class="bi bi-square ms-2 fs-5"></i></button>
+			<button id="cube" class="btn">Cube<i class="bi bi-box ms-2 fs-4"></i></button>
+			<div class="btn-wrapper">
+				<button id="customFormation" class="btn">Custom<i class="bi bi-pencil-square ms-2 fs-4"></i></button>
+				<div class="hover-panel">
+					<div id="canvas-container"></div>
+				</div>
+			</div>
+			<button id="reset" class="btn">Disband <i class="bi bi-x ms-2 fs-4"></i></button>
         </div>
         <div id="simulator-container"></div>
       </div>

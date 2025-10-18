@@ -7,7 +7,7 @@ import { initDrawingCanvas } from './canvas.js';
 import { AddConfigSlider } from './Components/configSlider.js';
 
 const Config = {
-  lerpMultiplier: 1, //interpolation speed
+  lerpMultiplier: 0.5, //interpolation speed
 };
 
 initDrawingCanvas('canvas-container');
@@ -16,13 +16,19 @@ const simulation = new Simulator('simulator-container');
 let lastUpdateTime = performance.now();
 let connection;
 
+document.getElementById('droneCount').addEventListener('input', function() {
+    this.value = this.value.replace(/[^0-9]/g, '');
+    if(this.value.length > 5) this.value = this.value.slice(0,4);
+});
+
 document.getElementById('pause').onclick = async () => {await api.pauseSimulation();};
 document.getElementById('square').onclick = async () => {await api.squareFormation();};
 document.getElementById('cube').onclick = async () => {await api.cubeFormation();};
 document.getElementById('reset').onclick = async () => {await api.resetFormation();};
 document.getElementById('start').onclick = async () => {
   
-  await api.startSimulation();
+  const dronecount = parseInt(document.getElementById('droneCount').value, 10) || 100;
+  await api.startSimulation(dronecount);
   
   if(!connection)
   {
@@ -98,11 +104,11 @@ animateDrones();
 
 //Configuration tab
 AddConfigSlider('config-options', 'CohesionSpeedFactor', 'Cohesion Speed', 0, 3, 0.1,  0.3);
-AddConfigSlider('config-options', 'SeparationSpeedFactor', 'Separation Speed', 0, 5, 0.1, 0.9);
+AddConfigSlider('config-options', 'SeparationSpeedFactor', 'Separation Speed', 0, 5, 0.1, 0.5);
 AddConfigSlider('config-options', 'MaxDroneSpeedLimit', 'Max Drone Speed', 0, 5, 0.1,  1);
-AddConfigSlider('config-options', 'SwarmSpeedMultiplier', 'Swarm Speed Multiplier', 0, 10, 1,  5);
+AddConfigSlider('config-options', 'SwarmSpeedMultiplier', 'Swarm Speed Multiplier', 0, 5, 1, 1);
 AddConfigSlider('config-options', 'MinSeparationDistance', 'Min Separation Distance', 0, 10, 1, 3);
-AddConfigSlider('config-options', 'WindForceFactor', 'Wind Force Factor', 0, 5, 0.1, 0.2 );
+AddConfigSlider('config-options', 'WindForceFactor', 'Wind Force Factor', 0, 1, 0.1, 0.2 );
 AddConfigSlider('config-options', 'TargetThreshold', 'Target Threshold Distance', 0, 100, 1, 20);
 
 AddConfigSlider('simulator-options', 'SimulatorBallSize', 'Drones Size', 0, 10, 0.1, 1);

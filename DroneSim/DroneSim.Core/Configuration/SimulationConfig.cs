@@ -14,9 +14,9 @@
 
         //Simulation speed parameters
         public static float CohesionSpeedFactor { get; set; } = 0.3f; //Fraction(0-1) of the distance to the center of mass to move EACH UPDATE CYCLE. For example, 0.1 means drones will move 10% of the distance to the center of mass each update.
-        public static float SeparationSpeedFactor { get; set; } = 0.9f; //Contribution to separation vector on EACH UPDATE CYCLE. Higher values make drones separate faster.
+        public static float SeparationSpeedFactor { get; set; } = 0.5f; //Contribution to separation vector on EACH UPDATE CYCLE. Higher values make drones separate faster.
         public static float MaxDroneSpeedLimit { get; set; } = 1; //Maximum drone speed units on EACH UPDATE. 0 Means no limit.
-        public static float SwarmSpeedMultiplier { get; set; } = 5; //Maximum swarm speed units on EACH UPDATE. 0 Means no limit.
+        public static float SwarmSpeedMultiplier { get; set; } = 1; //Maximum swarm speed units on EACH UPDATE. 0 Means no limit.
         public static float PerceptionFactor { get; set; } = float.MaxValue; //How many times the "MinSeparationDistance" to define which drones are considered as neighbors. Low values can make drones get separated from the rest.
 
 

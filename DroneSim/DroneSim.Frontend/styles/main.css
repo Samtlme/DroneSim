@@ -82,6 +82,17 @@ body {
   flex-grow: 1;
 }
 
+.dronecount-input {
+    width: 70px;
+    padding: 0 4px;
+    font-size: 12px;
+    border-radius: 0px;
+}
+.dronecount-input::placeholder {
+    font-size: 12px;
+    color: #C2BFCF;
+}
+
 .btn-group .btn,
 .btn-group-vertical .btn {
   padding: 0px;

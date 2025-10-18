@@ -15,7 +15,7 @@ async function apiCall(endpoint, data = null) {
   }
 }
 
-export async function startSimulation() { return apiCall('Start'); }
+export async function startSimulation(droneCount) { return apiCall('Start', droneCount); }
 export async function pauseSimulation() { return apiCall('Pause'); }
 export async function squareFormation() { return apiCall('Square'); }
 export async function cubeFormation() { return apiCall('Cube'); }
