@@ -27,7 +27,7 @@ namespace DroneSim.Core.Services
                     Id = i + 1,
                     Position = new Vector3(
                         (float)rnd.NextDouble() * 10,
-                        (float)rnd.NextDouble() * 25 + 15,
+                        (float)rnd.NextDouble() * 25 + 25,
                         (float)rnd.NextDouble() * 10)
                 });
             }

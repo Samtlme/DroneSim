@@ -9,8 +9,8 @@
         public static float XMin => -XMax;
         public static float ZMax { get; set; } = 1000;
         public static float ZMin => -ZMax;
-        public static float YMin { get; set; } = 7; //Ground level = 0
-        public static float YMax { get; set; } = 100;
+        public static float YMin { get; set; } = 12; //Ground level = 0
+        public static float YMax { get; set; } = 150;
 
         //Simulation speed parameters
         public static float CohesionSpeedFactor { get; set; } = 0.3f; //Fraction(0-1) of the distance to the center of mass to move EACH UPDATE CYCLE. For example, 0.1 means drones will move 10% of the distance to the center of mass each update.
@@ -24,7 +24,7 @@
         public static float MinSeparationDistance { get; set; } = 3;   //Minimum distance between drones. It multiplies "PerceptionFactor".
         public static float MinSeparationDistanceSquared => MinSeparationDistance * MinSeparationDistance; //Min Separation Squared for performance
         public static float WindForceFactor { get; set; } = 0.2f; //Wind strength factor. 
-        public static float TargetThreshold { get; set; } = 20; //Max distantance to target to consider it reached 
+        public static float TargetThreshold { get; set; } = 10; //Max distantance to target to consider it reached 
 
         //Application parameters
         public static int MaxCommandsInQueue { get; set; } = 20; //Max number of commands allowed in the queue. New commands will be ignored if reached.

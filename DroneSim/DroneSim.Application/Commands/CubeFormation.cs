@@ -18,9 +18,9 @@ namespace DroneSim.Application.Commands
             var initialpos = _physics.CalculateCenterOfMass(_swarm.GetDroneList);
 
             //check if it fits
-            if (initialpos.Y + ((quantityPerSide - 1) * SimulationConfig.MinSeparationDistance) > SimulationConfig.YMax)
+            if (initialpos.Y - ((quantityPerSide - 1) * SimulationConfig.MinSeparationDistance) < SimulationConfig.YMin)
             {
-                initialpos.Y = SimulationConfig.YMax - ((quantityPerSide - 1) * SimulationConfig.MinSeparationDistance);
+                initialpos.Y = SimulationConfig.YMin + ((quantityPerSide - 1) * SimulationConfig.MinSeparationDistance);
             }
 
             var initialX = initialpos.X;
@@ -47,7 +47,7 @@ namespace DroneSim.Application.Commands
                     counterX = 1;
                     counterZ = 0;
                     initialpos.Z = initialZ;
-                    initialpos.Y += SimulationConfig.MinSeparationDistance;
+                    initialpos.Y -= SimulationConfig.MinSeparationDistance;
                 }
             }
             return Task.FromResult(true);

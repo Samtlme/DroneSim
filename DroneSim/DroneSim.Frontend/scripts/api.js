@@ -21,5 +21,6 @@ export async function squareFormation() { return apiCall('Square'); }
 export async function cubeFormation() { return apiCall('Cube'); }
 export async function resetFormation() { return apiCall('resetFormation'); }
 export async function sendFormation(points) { return apiCall('customformation', points); }
+export async function mirrorToVertical() { return apiCall('MirrorToVertical'); }
 
 export async function setConfig(configValues) { return apiCall('setConfig',configValues); }

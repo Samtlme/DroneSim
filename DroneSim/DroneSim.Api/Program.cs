@@ -104,6 +104,12 @@ app.MapPost("/Api/Simulation/Cube", (SwarmCommandManager swarmCM) =>
     return Results.Ok($"Cube formation requested");
 });
 
+app.MapPost("/Api/Simulation/MirrorToVertical", (SwarmCommandManager swarmCM) =>
+{
+    swarmCM.MirrorToVertical();
+    return Results.Ok($"Cube formation requested");
+});
+
 #endregion
 
 app.Run();

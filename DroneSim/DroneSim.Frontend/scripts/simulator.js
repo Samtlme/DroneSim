@@ -13,7 +13,7 @@ export class Simulator {
 
         //camera(fov,ratio,min distance, max distance)
         this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.camera.position.set(0, 20, 50);
+        this.camera.position.set(0, 40, 45);
 
         //render options
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -32,6 +32,7 @@ export class Simulator {
         //zoom min-max
         this.controls.minDistance = 10;
         this.controls.maxDistance = 300;
+        this.controls.target.set(5, 20, 0);
         
         //provisional floor
         this.floorGeometry = new THREE.BoxGeometry(200, 1, 200);
@@ -40,7 +41,11 @@ export class Simulator {
         this.floor.position.y = -0.5;
         this.scene.add(this.floor);
 
-        this.light = new THREE.DirectionalLight(0xffffff, 1);
+        const grid = new THREE.GridHelper(200, 5, 0x707070, 0x707070)
+        grid.position.y = 0;
+        this.scene.add(grid);
+
+        this.light = new THREE.DirectionalLight(0xffffff, 1.4);
         this.light.position.set(0, 30, 0); //light position
         this.scene.add(this.light);
         this.scene.add(new THREE.AmbientLight(0x888888));
@@ -79,6 +84,7 @@ export class Simulator {
 
         const intersects = this.raycaster.intersectObjects(this.scene.children, true);
         if (intersects.length > 0) {
+            this.createWaypoint(intersects[0].point);
 
              fetch("https://localhost:7057/Api/Simulation/movetotarget", {
                 method: "POST",
@@ -91,4 +97,31 @@ export class Simulator {
             .then(console.log);
         }
     }
+
+    createWaypoint(position){
+        const geometry = new THREE.CylinderGeometry(0.3, 0.3, 50, 8);
+        const material = new THREE.MeshBasicMaterial({color: 0x33dd33, transparent: true, opacity: 0.5});
+        const waypoint = new THREE.Mesh(geometry, material);
+
+        waypoint.position.copy(position);
+        waypoint.position.y += 1;
+        this.scene.add(waypoint);
+
+        const duration = 3000;
+        const startTime = performance.now();
+
+        const fade = (time) => {
+            const elapsed = time - startTime;
+            const t = elapsed / duration;
+            if(t < 1){
+                material.opacity = 0.5 * (1 - t);
+                requestAnimationFrame(fade);
+            } else {
+                this.scene.remove(waypoint);
+            }
+        };
+
+        requestAnimationFrame(fade);
+    }
+
 }

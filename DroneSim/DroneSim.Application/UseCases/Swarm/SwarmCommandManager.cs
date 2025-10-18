@@ -1,4 +1,5 @@
 ﻿using DroneSim.Application.Commands;
+using DroneSim.Core.Configuration;
 using DroneSim.Core.Entities;
 using DroneSim.Core.Services;
 using System.Numerics;
@@ -59,5 +60,30 @@ namespace DroneSim.Application.UseCases.Swarm
             );
         }
 
+        public void MirrorToVertical()
+        {
+            var drones = _swarmService.GetDroneList;
+            var centerOfMass = _physicsService.CalculateCenterOfMass(drones);
+
+            List<Vector3> rotatedOffsets = new List<Vector3>();
+            float lowestY = float.MaxValue;
+
+            foreach (var drone in drones)
+            {
+                Vector3 relative = drone.PositionOffset - centerOfMass;
+                relative = new Vector3(relative.X, -relative.Z, relative.Y);
+                Vector3 rotated = centerOfMass + relative;
+                rotatedOffsets.Add(rotated);
+
+                if (rotated.Y < lowestY)
+                    lowestY = rotated.Y;
+            }
+
+            float offsetY = SimulationConfig.YMin - lowestY;
+            for (int i = 0; i < drones.Count; i++)
+            {
+                drones[i].PositionOffset = rotatedOffsets[i] + new Vector3(0, offsetY, 0);
+            }
+        }
     }
 }

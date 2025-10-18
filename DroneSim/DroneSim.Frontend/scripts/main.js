@@ -24,6 +24,7 @@ document.getElementById('droneCount').addEventListener('input', function() {
 document.getElementById('pause').onclick = async () => {await api.pauseSimulation();};
 document.getElementById('square').onclick = async () => {await api.squareFormation();};
 document.getElementById('cube').onclick = async () => {await api.cubeFormation();};
+document.getElementById('mirrorVertical').onclick = async () => {await api.mirrorToVertical();};
 document.getElementById('reset').onclick = async () => {await api.resetFormation();};
 document.getElementById('start').onclick = async () => {
   
@@ -109,7 +110,7 @@ AddConfigSlider('config-options', 'MaxDroneSpeedLimit', 'Max Drone Speed', 0, 5,
 AddConfigSlider('config-options', 'SwarmSpeedMultiplier', 'Swarm Speed Multiplier', 0, 5, 1, 1);
 AddConfigSlider('config-options', 'MinSeparationDistance', 'Min Separation Distance', 0, 10, 1, 3);
 AddConfigSlider('config-options', 'WindForceFactor', 'Wind Force Factor', 0, 1, 0.1, 0.2 );
-AddConfigSlider('config-options', 'TargetThreshold', 'Target Threshold Distance', 0, 100, 1, 20);
+AddConfigSlider('config-options', 'TargetThreshold', 'Target Threshold Distance', 0, 100, 1, 10);
 
 AddConfigSlider('simulator-options', 'SimulatorBallSize', 'Drones Size', 0, 10, 0.1, 1);
 const droneSizeSlider = document.getElementById('SimulatorBallSize');
