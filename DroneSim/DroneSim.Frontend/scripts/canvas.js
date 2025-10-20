@@ -25,17 +25,23 @@ export function initDrawingCanvas(containerId) {
 
   const ctx = canvas.getContext("2d");
   ctx.lineWidth = 5;
-  const points = [];
+
+  const strokes = [];
+  let currentStroke = [];
   let drawing = false;
 
   canvas.onmousedown = () => {
     drawing = true;
+    currentStroke = [];
     ctx.beginPath();
   };
 
   canvas.onmouseup = () => {
     drawing = false;
     ctx.beginPath();
+    if (currentStroke.length > 0) {
+      strokes.push(currentStroke);
+    }
   };
 
   canvas.onmousemove = e => {
@@ -43,19 +49,17 @@ export function initDrawingCanvas(containerId) {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    points.push({ x, y });
-
+    currentStroke.push({ x, y });
     ctx.lineTo(x, y);
     ctx.stroke();
   };
 
   clearBtn.onclick = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    points.length = 0;
+    strokes.length = 0;
   };
 
   sendBtn.onclick = () => {
-    api.sendFormation(points);
+    api.sendFormation(strokes);
   };
 }
-

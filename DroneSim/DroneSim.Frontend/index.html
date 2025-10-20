@@ -52,7 +52,7 @@
 			<button class="btn btn-label" disabled>Simulation control</button>
 			<div class="d-flex align-items-center m-2">
 				<label class="me-2 mb-0 fw-bold" style="font-size: 11px; width: 40px;">Drone Count</label>
-				<input type="text" id="droneCount" class="form-control form-control-sm dronecount-input" maxlength="4" autocomplete="off" placeholder="e.g. 100"/>
+				<input type="text" id="droneCount" class="form-control form-control-sm dronecount-input" maxlength="4" autocomplete="off" placeholder="Default = 100t"/>
 			</div>
 
 			<button id="start" class="btn">Start<i class="bi bi-play ms-2 fs-4"></i></button>
@@ -69,6 +69,12 @@
 			</div>
 			<button id="reset" class="btn">Disband <i class="bi bi-x ms-2 fs-4"></i></button>
 			<button id="mirrorVertical" class="btn">Mirror Vertical<i class="bi bi-symmetry-horizontal ms-2 fs-5"></i></button>
+
+			<button class="btn btn-label" disabled>Drone Control</button>
+			<div class="d-flex">
+				<button id="droneDown" class="btn btn-small"><i class="bi bi-arrow-down"></i></button>
+				<button id="droneUp" class="btn btn-small"><i class="bi bi-arrow-up"></i></button>
+			</div>
         </div>
         <div id="simulator-container"></div>
       </div>

@@ -85,9 +85,9 @@ app.MapPost("/Api/Simulation/resetformation", (SwarmCommandManager swarmCM) =>
 
 });
 
-app.MapPost("/Api/Simulation/customformation", (List<Coordinates> points, SwarmCommandManager swarmCM) =>
+app.MapPost("/Api/Simulation/customformation", (List<List<Coordinates>> pointList, SwarmCommandManager swarmCM) =>
 {
-    swarmCM.GetInCustomFormation(points);
+    swarmCM.GetInCustomFormation(pointList);
     return Results.Ok($"Custom formation requested.");
 
 });
@@ -110,6 +110,18 @@ app.MapPost("/Api/Simulation/MirrorToVertical", (SwarmCommandManager swarmCM) =>
     return Results.Ok($"Cube formation requested");
 });
 
+app.MapPost("/Api/Simulation/dronesUp", (SwarmCommandManager swarmCM) =>
+{
+    swarmCM.MoveDronesUp();
+    return Results.Ok($"Cube formation requested");
+
+});
+
+app.MapPost("/Api/Simulation/dronesDown", (SwarmCommandManager swarmCM) =>
+{
+    swarmCM.MoveDronesDown();
+    return Results.Ok($"Cube formation requested");
+});
 #endregion
 
 app.Run();

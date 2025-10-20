@@ -21,11 +21,18 @@ document.getElementById('droneCount').addEventListener('input', function() {
     if(this.value.length > 5) this.value = this.value.slice(0,4);
 });
 
-document.getElementById('pause').onclick = async () => {await api.pauseSimulation();};
+
 document.getElementById('square').onclick = async () => {await api.squareFormation();};
 document.getElementById('cube').onclick = async () => {await api.cubeFormation();};
 document.getElementById('mirrorVertical').onclick = async () => {await api.mirrorToVertical();};
+document.getElementById('droneUp').onclick = async () => {await api.dronesUp();};
+document.getElementById('droneDown').onclick = async () => {await api.dronesDown();};
 document.getElementById('reset').onclick = async () => {await api.resetFormation();};
+document.getElementById('pause').onclick = async function() {
+  this.classList.toggle("btn-simulate-hover-active");
+  await api.pauseSimulation();
+};
+
 document.getElementById('start').onclick = async () => {
   
   const dronecount = parseInt(document.getElementById('droneCount').value, 10) || 100;
@@ -75,8 +82,16 @@ document.getElementById('start').onclick = async () => {
     });
   }
 
+
+
   try {
+
+    if (connection.state === signalR.HubConnectionState.Connected) {
+      await connection.stop();
+    }
+
     await connection.start();
+    document.getElementById("start").innerHTML = 'Restart <i class="bi bi-arrow-counterclockwise ms-2 fs-4"></i>';
     console.log("SignalR connected");
   } catch (err) {
     console.error("Error connecting to hub:", err);

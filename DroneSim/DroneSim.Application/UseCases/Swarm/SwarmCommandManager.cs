@@ -50,15 +50,17 @@ namespace DroneSim.Application.UseCases.Swarm
                 )
             );
         }
-        public void GetInCustomFormation(List<Coordinates> points)
+        public void GetInCustomFormation(List<List<Coordinates>> pointList)
         {
+            var pointListVectors = pointList
+                .Select(x => x.Select(p => new Vector2(p.X, p.Y)).ToList())
+                .ToList();
+
             _commandService.EnqueueCommand(
-                new CustomFormation(
-                    _swarmService,
-                    points.Select(x => new Vector2(x.X, x.Y)).ToList()
-                )
+                new CustomFormation(_swarmService, pointListVectors)
             );
         }
+
 
         public void MirrorToVertical()
         {
@@ -83,6 +85,34 @@ namespace DroneSim.Application.UseCases.Swarm
             for (int i = 0; i < drones.Count; i++)
             {
                 drones[i].PositionOffset = rotatedOffsets[i] + new Vector3(0, offsetY, 0);
+            }
+        }
+
+        public void MoveDronesUp()
+        {
+            var drones = _swarmService.GetDroneList;
+            var movement = new Vector3(0, 4, 0);
+            foreach (var drone in drones) 
+            {
+                drone.Position += movement;
+                if (drone.PositionOffset != Vector3.Zero) 
+                {
+                    drone.PositionOffset += movement;
+                }
+            }
+        }
+
+        public void MoveDronesDown()
+        {
+            var drones = _swarmService.GetDroneList;
+            var movement = new Vector3(0, 4, 0);
+            foreach (var drone in drones)
+            {
+                drone.Position -= new Vector3(0, 4, 0);
+                if (drone.PositionOffset != Vector3.Zero)
+                {
+                    drone.PositionOffset -= movement;
+                }
             }
         }
     }

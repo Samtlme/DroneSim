@@ -10,7 +10,7 @@
         public static float ZMax { get; set; } = 1000;
         public static float ZMin => -ZMax;
         public static float YMin { get; set; } = 12; //Ground level = 0
-        public static float YMax { get; set; } = 150;
+        public static float YMax { get; set; } = 190;
 
         //Simulation speed parameters
         public static float CohesionSpeedFactor { get; set; } = 0.3f; //Fraction(0-1) of the distance to the center of mass to move EACH UPDATE CYCLE. For example, 0.1 means drones will move 10% of the distance to the center of mass each update.

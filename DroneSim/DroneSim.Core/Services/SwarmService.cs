@@ -73,7 +73,12 @@ namespace DroneSim.Core.Services
 
         public void PauseSimulation()
         {
-            _timer?.Stop();
+            if (_timer == null) return;
+
+            if (_timer.Enabled)
+                _timer.Stop();
+            else
+                _timer.Start();
         }
 
         #endregion

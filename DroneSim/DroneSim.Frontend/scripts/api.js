@@ -22,5 +22,7 @@ export async function cubeFormation() { return apiCall('Cube'); }
 export async function resetFormation() { return apiCall('resetFormation'); }
 export async function sendFormation(points) { return apiCall('customformation', points); }
 export async function mirrorToVertical() { return apiCall('MirrorToVertical'); }
+export async function dronesUp() { return apiCall('dronesUp'); }
+export async function dronesDown() { return apiCall('dronesDown'); }
 
 export async function setConfig(configValues) { return apiCall('setConfig',configValues); }

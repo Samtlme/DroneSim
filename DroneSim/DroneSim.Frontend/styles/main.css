@@ -89,8 +89,12 @@ body {
     border-radius: 0px;
 }
 .dronecount-input::placeholder {
-    font-size: 12px;
+    font-size: 10px;
     color: #C2BFCF;
+}
+
+.btn-small {
+  width: 70px !important;
 }
 
 .btn-group .btn,
@@ -124,6 +128,12 @@ body {
 .btn-group-vertical .btn:active {
   transform: translateY(0);
   box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+.btn-simulate-hover-active
+{
+  background-color: var(--accent) !important;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1) !important;
 }
 
 .btn-group-vertical .btn-label {

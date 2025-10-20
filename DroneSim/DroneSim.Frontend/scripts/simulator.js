@@ -6,7 +6,7 @@ export class Simulator {
     {
         this.container = document.getElementById(containerId);
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0xa0a0a0);
+        this.scene.background = new THREE.Color(0xb3b0bf);
 
         const width = this.container.clientWidth;
         const height = this.container.clientHeight;
@@ -35,13 +35,13 @@ export class Simulator {
         this.controls.target.set(5, 20, 0);
         
         //provisional floor
-        this.floorGeometry = new THREE.BoxGeometry(200, 1, 200);
-        this.floorMaterial = new THREE.MeshPhongMaterial({ color: 0x808080 });
+        this.floorGeometry = new THREE.BoxGeometry(300, 1, 300);
+        this.floorMaterial = new THREE.MeshPhongMaterial({ color: 0x747391 });
         this.floor = new THREE.Mesh(this.floorGeometry, this.floorMaterial);
         this.floor.position.y = -0.5;
         this.scene.add(this.floor);
 
-        const grid = new THREE.GridHelper(200, 5, 0x707070, 0x707070)
+        const grid = new THREE.GridHelper(300, 5, 0x707070, 0x707070)
         grid.position.y = 0;
         this.scene.add(grid);
 

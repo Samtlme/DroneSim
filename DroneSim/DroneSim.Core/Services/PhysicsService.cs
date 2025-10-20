@@ -20,25 +20,61 @@ namespace DroneSim.Core.Services
         /// <param name="drones">Drone list</param>
         internal void ApplyBoidsRules(IEnumerable<Drone> drones)
         {
-            var neighbors = new List<(Drone drone, float distanceSquared)>(drones.Count());
-            var MinSeparationDistanceSquared = SimulationConfig.MinSeparationDistanceSquared;
-            var PerceptionFactor = SimulationConfig.PerceptionFactor;
-            var SeparationSpeedFactor = SimulationConfig.SeparationSpeedFactor;
-            var CohesionSpeedFactor = SimulationConfig.CohesionSpeedFactor;
-            var MaxDroneSpeedLimit = SimulationConfig.MaxDroneSpeedLimit;
+            var neighbors = new List<(Drone drone, float distanceSquared)>();
+            var minSeparationDistanceSquared = SimulationConfig.MinSeparationDistanceSquared;
+            var perceptionFactor = SimulationConfig.PerceptionFactor;
+            var separationSpeedFactor = SimulationConfig.SeparationSpeedFactor;
+            var cohesionSpeedFactor = SimulationConfig.CohesionSpeedFactor;
+            var maxDroneSpeedLimit = SimulationConfig.MaxDroneSpeedLimit;
+
+            var centerOfMass = CalculateCenterOfMass(drones);
+            var cellSize = SimulationConfig.MinSeparationDistance;
+            var grid = new Dictionary<(int, int, int), List<Drone>>();
+
+            foreach (var drone in drones)
+            {
+                var cell = (
+                    (int)(drone.Position.X / cellSize),
+                    (int)(drone.Position.Y / cellSize),
+                    (int)(drone.Position.Z / cellSize)
+                );
+
+                if (!grid.ContainsKey(cell))
+                    grid[cell] = new List<Drone>();
+
+                grid[cell].Add(drone);
+            }
 
             foreach (var drone in drones)
             {
                 var movement = Vector3.Zero;
-                neighbors.Clear();
+                neighbors = new List<(Drone, float)>();
 
-                foreach (var other in drones)
+                var cell = (
+                    (int)(drone.Position.X / cellSize),
+                    (int)(drone.Position.Y / cellSize),
+                    (int)(drone.Position.Z / cellSize)
+                );
+
+                for (int dx = -1; dx <= 1; dx++)
                 {
-                    if (other == drone) continue;
+                    for (int dy = -1; dy <= 1; dy++)
+                    {
+                        for (int dz = -1; dz <= 1; dz++)
+                        {
+                            var neighborCell = (cell.Item1 + dx, cell.Item2 + dy, cell.Item3 + dz);
+                            if (!grid.ContainsKey(neighborCell)) continue;
 
-                    var distanceSquared = Vector3.DistanceSquared(drone.Position, other.Position);
-                    if (distanceSquared < MinSeparationDistanceSquared * PerceptionFactor)
-                        neighbors.Add((other, distanceSquared));
+                            foreach (var other in grid[neighborCell])
+                            {
+                                if (other == drone) continue;
+                                float distanceSquared = Vector3.DistanceSquared(drone.Position, other.Position);
+
+                                if (distanceSquared < minSeparationDistanceSquared * perceptionFactor)
+                                    neighbors.Add((other, distanceSquared));
+                            }
+                        }
+                    }
                 }
 
                 //Separation
@@ -46,34 +82,27 @@ namespace DroneSim.Core.Services
                 {
                     var offset = drone.Position - n.Position;
 
-                    if (distanceSquared < MinSeparationDistanceSquared && distanceSquared > 0)
+                    if (distanceSquared < minSeparationDistanceSquared && distanceSquared > 0)
                     {
-                        movement += offset / distanceSquared * SeparationSpeedFactor;
+                        movement += offset / distanceSquared * separationSpeedFactor;
                     }
                 }
 
                 //Cohesion
                 if (drone.PositionOffset != Vector3.Zero)
                 {
-                    movement += (drone.PositionOffset - drone.Position) * CohesionSpeedFactor;
+                    movement += (drone.PositionOffset - drone.Position) * cohesionSpeedFactor;
                 }
                 else if (neighbors.Count != 0)
                 {
-                    var neighborMassCenter = Vector3.Zero;
-
-                    foreach (var (n, distanceSquared) in neighbors)
-                        neighborMassCenter += n.Position;
-
-                    neighborMassCenter /= neighbors.Count;
-                    movement += (neighborMassCenter - drone.Position) * CohesionSpeedFactor;
-
+                    movement += (centerOfMass - drone.Position) * cohesionSpeedFactor;
                 }
 
                 //Speed limit
                 var speed = movement.Length();
-                if (MaxDroneSpeedLimit > 0 && speed > MaxDroneSpeedLimit)
+                if (maxDroneSpeedLimit > 0 && speed > maxDroneSpeedLimit)
                 {
-                    movement = Vector3.Normalize(movement) * MaxDroneSpeedLimit;
+                    movement = Vector3.Normalize(movement) * maxDroneSpeedLimit;
                 }
 
                 drone.Position += movement;
