@@ -113,7 +113,7 @@ public class SwarmNotifier
         await _replayManager.DeleteReplayAsync(sessionId);
     }
 
-    public async Task StartReplay()
+    public async Task StartRecording()
     {
         if (_isRecording)
             throw new InvalidOperationException("Error: Already recording.");
@@ -124,7 +124,7 @@ public class SwarmNotifier
         _isRecording = true;
     }
 
-    public void StopReplay()
+    public void StopRecording()
     {
         _isRecording = false;
         _currentReplayId = null;

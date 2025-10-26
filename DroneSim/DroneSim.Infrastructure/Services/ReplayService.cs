@@ -1,7 +1,6 @@
 ﻿using DroneSim.Core.Entities;
 using StackExchange.Redis;
 using System.Text.Json;
-
 using DroneSim.Core.Interfaces;
 namespace DroneSim.Infrastructure.Services;
 
@@ -49,7 +48,7 @@ public class ReplayService(IConnectionMultiplexer redis) : IReplayRepository
     {
         var json = JsonSerializer.Serialize(frame);
         await _db.ListRightPushAsync($"replay:{sessionId}", json);
-        await _db.ListTrimAsync($"replay:{sessionId}", -2000, -1);
+        await _db.ListTrimAsync($"replay:{sessionId}", -2000, -1);  //Limit to last 2k frames, 1000s at 2Hz, to prevent accidental growth
     }
 
     // DISCLAIMER: Could switch to binary serialization (MemoryPack or Protobuf) for better performance 

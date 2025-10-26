@@ -6,6 +6,7 @@ using DroneSim.Application.UseCases.Swarm;
 using DroneSim.Core.Entities;
 using DroneSim.Core.Interfaces;
 using DroneSim.Core.Services;
+using DroneSim.Infrastructure.Middleware;
 using DroneSim.Infrastructure.Redis;
 using DroneSim.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -52,6 +53,9 @@ if (app.Environment.IsDevelopment())
 {
     app.UseCors();
 }
+
+app.UseMiddleware<GlobalErrorHandler>();
+app.UseHttpsRedirection();
 
 app.MapHub<DronesHub>("/Api/Simulation/droneshub");
 
@@ -140,15 +144,16 @@ app.MapPost("/Api/Simulation/dronesDown", (SwarmCommandManager swarmCM) =>
 
 
 #region Replays
+
 app.MapPost("/Api/Replay/start", (SwarmNotifier notifier) =>
 {
-    var id = notifier.StartReplay();
+    var id = notifier.StartRecording();
     return Results.Ok(new { ReplayId = id });
 });
 
 app.MapPost("/Api/Replay/stop", (SwarmNotifier notifier) =>
 {
-    notifier.StopReplay();
+    notifier.StopRecording();
     return Results.Ok();
 });
 
