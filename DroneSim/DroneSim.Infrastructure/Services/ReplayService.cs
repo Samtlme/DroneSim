@@ -2,16 +2,12 @@
 using StackExchange.Redis;
 using System.Text.Json;
 
-namespace DroneSim.Infrastructure.Replay;
+using DroneSim.Core.Interfaces;
+namespace DroneSim.Infrastructure.Services;
 
-public class ReplayService
+public class ReplayService(IConnectionMultiplexer redis) : IReplayRepository
 {
-    private readonly IDatabase _db;
-
-    public ReplayService(IConnectionMultiplexer redis)
-    {
-        _db = redis.GetDatabase();
-    }
+    private readonly IDatabase _db = redis.GetDatabase();
 
     public async Task RegisterReplayAsync(string sessionId)
     {

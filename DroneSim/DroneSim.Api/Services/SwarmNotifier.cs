@@ -1,30 +1,29 @@
 ﻿using DroneSim.Api.DTOs;
 using DroneSim.Api.SignalR;
+using DroneSim.Application.UseCases.Replay;
 using DroneSim.Core.Entities;
 using DroneSim.Core.Services;
-using DroneSim.Infrastructure.Replay;
 using Microsoft.AspNetCore.SignalR;
 using System.Text.Json;
 
 namespace DroneSim.Api.Services;    
 public class SwarmNotifier
 {
+    private int _frameOrder = 0;
     private string? _currentReplayId;
     private bool _isRecording = false;
-    private int _frameOrder = 0;
-    private readonly SwarmService _swarm;
-    private readonly ReplayService _replayService;
     private readonly double _targetReplayFps = 2.0; //Limited to 2Hz, enough and shouldn't overwhelm the DB
+    private readonly SwarmService _swarmService;
+    private readonly ReplayManager _replayManager;
     private readonly IHubContext<DronesHub> _hubContext;
     private DateTime _lastFrameTime = DateTime.MinValue;
-
-    public SwarmNotifier(SwarmService swarm, IHubContext<DronesHub> hubContext, ReplayService replayService)
+    public SwarmNotifier(SwarmService swarm, IHubContext<DronesHub> hubContext, ReplayManager replayManager)
     {
         _hubContext = hubContext;
-        _replayService = replayService;
-        _swarm = swarm;
+        _replayManager = replayManager;
+        _swarmService = swarm;
 
-        _swarm.OnDronesUpdated += async (drones) =>
+        _swarmService.OnDronesUpdated += async (drones) =>
         {
             var dtoList = new List<DroneDto>();
             lock (drones)
@@ -49,7 +48,7 @@ public class SwarmNotifier
                     Frame = ++_frameOrder,
                     Drones = dtoList
                 };
-                await _replayService.SaveFrameAsync(_currentReplayId, frame);
+                await _replayManager.SaveFrameAsync(_currentReplayId, frame);
             }
         };
     }
@@ -60,10 +59,10 @@ public class SwarmNotifier
         var auxBuffer = new Queue<List<DroneDto>>();
         bool isFetchingFrames = false;
 
-        _swarm.PauseSimulation();
-        _swarm.ClearDroneList();
+        _swarmService.PauseSimulation();
+        _swarmService.ClearDroneList();
 
-        var initialChunk = await _replayService.GetReplayChunkAsync<JsonElement>(replayId, currentIndex, chunkSize);
+        var initialChunk = await _replayManager.GetReplayChunkAsync<JsonElement>(replayId, currentIndex, chunkSize);
         foreach (var frame in initialChunk)
             mainBuffer.Enqueue(frame.GetProperty("Drones").Deserialize<List<DroneDto>>()!);
 
@@ -79,7 +78,7 @@ public class SwarmNotifier
                 isFetchingFrames = true;
                 _ = Task.Run(async () =>
                 {
-                    var nextChunk = await _replayService.GetReplayChunkAsync<JsonElement>(
+                    var nextChunk = await _replayManager.GetReplayChunkAsync<JsonElement>(
                         replayId, currentIndex, chunkSize);
                     lock (auxBuffer)
                     {
@@ -106,12 +105,12 @@ public class SwarmNotifier
 
     public async Task<IReadOnlyList<ReplayInfo>> GetReplayList()
     {
-        return await _replayService.ListReplaysAsync();
+        return await _replayManager.ListReplaysAsync();
     }
 
     public async Task DeleteReplayAsync(string sessionId)
     {
-        await _replayService.DeleteReplayAsync(sessionId);
+        await _replayManager.DeleteReplayAsync(sessionId);
     }
 
     public async Task StartReplay()
@@ -121,7 +120,7 @@ public class SwarmNotifier
 
         _frameOrder = 0;
         _currentReplayId = Guid.NewGuid().ToString();
-        await _replayService.RegisterReplayAsync(_currentReplayId);
+        await _replayManager.RegisterReplayAsync(_currentReplayId);
         _isRecording = true;
     }
 

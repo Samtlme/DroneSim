@@ -251,7 +251,7 @@ function toggleDarkMode() {
             drone.material.emissiveIntensity = 0.9;
             //Glow setup drones
             if (!drone.userData.glow) {
-                const glowGeometry = new THREE.SphereGeometry(0.35, 8, 8);
+                const glowGeometry = new THREE.SphereGeometry(0.45, 8, 8);
                 const glowMaterial = new THREE.MeshBasicMaterial({
                     color: drone.material.color,
                     transparent: true,

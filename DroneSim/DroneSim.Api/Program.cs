@@ -1,13 +1,15 @@
+using DroneSim.Api.Services;
 using DroneSim.Api.SignalR;
+using DroneSim.Application.UseCases.Replay;
 using DroneSim.Application.UseCases.Simulation;
 using DroneSim.Application.UseCases.Swarm;
 using DroneSim.Core.Entities;
+using DroneSim.Core.Interfaces;
 using DroneSim.Core.Services;
 using DroneSim.Infrastructure.Redis;
+using DroneSim.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
-using DroneSim.Infrastructure.Replay;
 using StackExchange.Redis;
-using DroneSim.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,9 +39,10 @@ builder.Services.AddSingleton<PhysicsService>();
 builder.Services.AddSingleton<CommandService>();
 builder.Services.AddSingleton<SwarmService>();
 builder.Services.AddSingleton<SwarmNotifier>();
+builder.Services.AddSingleton<IReplayRepository, ReplayService>();
+builder.Services.AddSingleton<ReplayManager>();
 builder.Services.AddSingleton<SimulationManager>();
 builder.Services.AddSingleton<SwarmCommandManager>();
-builder.Services.AddSingleton<ReplayService>();
 
 var app = builder.Build();
 
@@ -137,9 +140,8 @@ app.MapPost("/Api/Simulation/dronesDown", (SwarmCommandManager swarmCM) =>
 
 
 #region Replays
-app.MapPost("/Api/Replay/start", (SwarmNotifier notifier, SimulationManager swarmSM) =>
+app.MapPost("/Api/Replay/start", (SwarmNotifier notifier) =>
 {
-    swarmSM.StartSimulation(0);
     var id = notifier.StartReplay();
     return Results.Ok(new { ReplayId = id });
 });
@@ -156,8 +158,9 @@ app.MapPost("/Api/Replay/getReplays", async (SwarmNotifier notifier) =>
     return Results.Ok(replays);
 });
 
-app.MapPost("/Api/Replay/playReplay", async (SwarmNotifier notifier, [FromBody] string replayId) =>
+app.MapPost("/Api/Replay/playReplay", async (SwarmNotifier notifier, SimulationManager swarmSM, [FromBody] string replayId) =>
 {
+    swarmSM.StartSimulation(0);
     await notifier.PlayReplayAsync(replayId);
     return Results.Ok();
 });
