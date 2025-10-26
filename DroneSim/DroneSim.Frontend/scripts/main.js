@@ -6,9 +6,12 @@ import * as THREE from 'three';
 import { initDrawingCanvas } from './canvas.js';
 import { AddConfigSlider } from './Components/configSlider.js';
 
+let isRecording = false;
+let darkMode = false;
 const Config = {
   lerpMultiplier: 0.5, //interpolation speed
 };
+
 
 initDrawingCanvas('canvas-container');
 
@@ -28,17 +31,29 @@ document.getElementById('mirrorVertical').onclick = async () => {await api.mirro
 document.getElementById('droneUp').onclick = async () => {await api.dronesUp();};
 document.getElementById('droneDown').onclick = async () => {await api.dronesDown();};
 document.getElementById('reset').onclick = async () => {await api.resetFormation();};
+
+document.getElementById('toggleReplay').onclick = async () => {
+  const btn = document.getElementById('toggleReplay');
+  if (!isRecording) {
+    await api.startReplay();
+    isRecording = true;
+    btn.innerHTML = 'Stop recording <i class="bi bi-stop-circle-fill ms-2 fs-5"></i>';
+    btn.classList.add('btn-recording');
+  } else {
+    await api.stopReplay();
+    isRecording = false;
+    btn.innerHTML = 'Capture <i class="bi bi-record-circle-fill ms-2 fs-5"></i>';
+    btn.classList.remove('btn-recording');
+  }
+};
+
 document.getElementById('pause').onclick = async function() {
   this.classList.toggle("btn-simulate-hover-active");
   await api.pauseSimulation();
 };
 
-document.getElementById('start').onclick = async () => {
-  
-  const dronecount = parseInt(document.getElementById('droneCount').value, 10) || 100;
-  await api.startSimulation(dronecount);
-  
-  if(!connection)
+async function initSignalR(){
+if(!connection)
   {
     connection = new signalR.HubConnectionBuilder()
     .withUrl("https://localhost:7057/Api/Simulation/droneshub")
@@ -47,7 +62,6 @@ document.getElementById('start').onclick = async () => {
 
     connection.on("UpdateDrones", (apiDrones) => {
       const currentIdsSet = new Set(apiDrones.map(d => d.id));
-
       for (const id in DM.drones) {
         if (!currentIdsSet.has(Number(id))) {
             const drone = DM.drones[id];
@@ -82,15 +96,20 @@ document.getElementById('start').onclick = async () => {
     });
   }
 
+  if (connection.state === signalR.HubConnectionState.Connected) {
+    await connection.stop();
+  }
 
+  await connection.start();
+};
+
+document.getElementById('start').onclick = async () => {
+  
+  const dronecount = parseInt(document.getElementById('droneCount').value, 10) || 100;
+  await api.startSimulation(dronecount);
 
   try {
-
-    if (connection.state === signalR.HubConnectionState.Connected) {
-      await connection.stop();
-    }
-
-    await connection.start();
+    initSignalR();
     document.getElementById("start").innerHTML = 'Restart <i class="bi bi-arrow-counterclockwise ms-2 fs-4"></i>';
     console.log("SignalR connected");
   } catch (err) {
@@ -160,4 +179,111 @@ document.getElementById('applyConfig').addEventListener("click",async () =>
     await api.setConfig(configValues);
 });
 
+//Replays tab
 
+async function loadReplays() {
+  const list = document.getElementById('replayList');
+  list.innerHTML = '';
+  const replays = await api.listReplays();
+
+replays.forEach(replay => {
+  const li = document.createElement('li');
+  li.className = 'list-group-item d-flex justify-content-between align-items-center';
+
+  const info = document.createElement('span');
+  info.textContent = `Replay ${replay.id.substring(0, 8)} — ${new Date(replay.startedAt).toLocaleString()}`;
+
+  const btnGroup = document.createElement('div');
+  btnGroup.className = 'btn-group gap-2';
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.className = 'btn btn-small';
+  deleteBtn.innerHTML = '<i class="bi bi-trash3 fs-4"></i>';
+  deleteBtn.title = 'Eliminar';
+  deleteBtn.onclick = e => {
+    e.stopPropagation();
+    api.deleteReplay(replay.id);
+    li.remove();
+  };
+
+  const playBtn = document.createElement('button');
+  playBtn.className = 'btn btn-small';
+  playBtn.innerHTML = '<i class="bi bi-play-fill fs-4"></i>';
+  playBtn.title = 'Reproducir';
+  playBtn.onclick = e => {
+    e.stopPropagation();
+    document.querySelectorAll('#replayList .list-group-item').forEach(el => el.classList.remove('active'));
+    li.classList.add('active');
+    initSignalR();
+    api.playReplay(replay.id);
+  };
+
+  btnGroup.appendChild(playBtn);
+  btnGroup.appendChild(deleteBtn);
+  li.appendChild(info);
+  li.appendChild(btnGroup);
+
+  list.appendChild(li);
+});
+
+}
+
+const replaysTab = document.getElementById('replays-tab');
+replaysTab.addEventListener('shown.bs.tab', loadReplays);
+
+
+function toggleDarkMode() {
+    darkMode = !darkMode;
+
+    //Background
+    simulation.scene.background = new THREE.Color(darkMode ? 0x101010 : 0xb3b0bf);
+    simulation.light.intensity = darkMode ? 0.2 : 1.4;
+    simulation.scene.children.forEach(obj => {
+        if (obj.type === "AmbientLight") {
+            obj.intensity = darkMode ? 0.4 : 0.888;
+        }
+    });
+
+    Object.values(DM.drones).forEach(drone => {
+
+        if (darkMode) {
+            drone.material.emissive = new THREE.Color(drone.material.color);
+            drone.material.emissiveIntensity = 0.9;
+            //Glow setup drones
+            if (!drone.userData.glow) {
+                const glowGeometry = new THREE.SphereGeometry(0.35, 8, 8);
+                const glowMaterial = new THREE.MeshBasicMaterial({
+                    color: drone.material.color,
+                    transparent: true,
+                    opacity: 0.25
+                });
+                const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+                glow.renderOrder = 1;//so we don't mess up rendering layers
+                drone.add(glow);
+                drone.userData.glow = glow;
+            } else {
+                drone.userData.glow.visible = true;
+            }
+        } else {
+            drone.material.emissive = new THREE.Color(0x000000);
+            drone.material.emissiveIntensity = 0;
+
+            if (drone.userData.glow) {
+                drone.userData.glow.visible = false;
+            }
+        }
+        drone.material.needsUpdate = true;
+    });
+
+    if (simulation.glowGrid) {
+      simulation.glowGrid.visible = darkMode;
+    }
+
+    if(simulation.floor){
+      simulation.floorMaterial = darkMode ? new THREE.MeshPhongMaterial({ color: 0x434254 }) :
+                                            new THREE.MeshPhongMaterial({ color: 0x747391 });
+    }
+}
+
+const darkModeBtn = document.getElementById('nightModeToggle');
+darkModeBtn.addEventListener('click', toggleDarkMode);

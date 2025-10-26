@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace DroneSim.Api.SignalR
+namespace DroneSim.Api.SignalR;
+
+public class DronesHub : Hub
 {
-    public class DronesHub : Hub
-    {
-        //Only needed for injection
-    }
+    //Only needed for injection
 }

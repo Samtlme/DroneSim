@@ -34,16 +34,24 @@ export class Simulator {
         this.controls.maxDistance = 300;
         this.controls.target.set(5, 20, 0);
         
-        //provisional floor
+        //provisional floor & grid
         this.floorGeometry = new THREE.BoxGeometry(300, 1, 300);
         this.floorMaterial = new THREE.MeshPhongMaterial({ color: 0x747391 });
         this.floor = new THREE.Mesh(this.floorGeometry, this.floorMaterial);
         this.floor.position.y = -0.5;
         this.scene.add(this.floor);
-
-        const grid = new THREE.GridHelper(300, 5, 0x707070, 0x707070)
+        const grid = new THREE.GridHelper(300, 5, 0x707070, 0x707070);
         grid.position.y = 0;
         this.scene.add(grid);
+        this.grid = grid;
+
+        const glowGrid = new THREE.GridHelper(300, 5, 0x00e5ff, 0x00e5ff);
+        glowGrid.material.transparent = true;
+        glowGrid.material.opacity = 1.0;
+        glowGrid.position.y = 0.1;
+        glowGrid.visible = false;   //deactivated by defautl
+        this.scene.add(glowGrid);
+        this.glowGrid = glowGrid;
 
         this.light = new THREE.DirectionalLight(0xffffff, 1.4);
         this.light.position.set(0, 30, 0); //light position

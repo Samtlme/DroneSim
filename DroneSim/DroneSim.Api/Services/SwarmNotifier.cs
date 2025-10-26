@@ -1,13 +1,30 @@
 ﻿using DroneSim.Api.DTOs;
 using DroneSim.Api.SignalR;
+using DroneSim.Core.Entities;
 using DroneSim.Core.Services;
+using DroneSim.Infrastructure.Replay;
 using Microsoft.AspNetCore.SignalR;
+using System.Text.Json;
 
+namespace DroneSim.Api.Services;    
 public class SwarmNotifier
 {
-    public SwarmNotifier(SwarmService swarm, IHubContext<DronesHub> hubContext)
+    private string? _currentReplayId;
+    private bool _isRecording = false;
+    private int _frameOrder = 0;
+    private readonly SwarmService _swarm;
+    private readonly ReplayService _replayService;
+    private readonly double _targetReplayFps = 2.0; //Limited to 2Hz, enough and shouldn't overwhelm the DB
+    private readonly IHubContext<DronesHub> _hubContext;
+    private DateTime _lastFrameTime = DateTime.MinValue;
+
+    public SwarmNotifier(SwarmService swarm, IHubContext<DronesHub> hubContext, ReplayService replayService)
     {
-        swarm.OnDronesUpdated += async (drones) =>
+        _hubContext = hubContext;
+        _replayService = replayService;
+        _swarm = swarm;
+
+        _swarm.OnDronesUpdated += async (drones) =>
         {
             var dtoList = new List<DroneDto>();
             lock (drones)
@@ -20,7 +37,98 @@ public class SwarmNotifier
                     Z = x.Position.Z
                 }).ToList();
             }
-            await hubContext.Clients.All.SendAsync("UpdateDrones", dtoList);
+            await _hubContext.Clients.All.SendAsync("UpdateDrones", dtoList);
+
+            var now = DateTime.UtcNow;
+            if (_isRecording && _currentReplayId != null && ((now - _lastFrameTime).TotalSeconds >= 1.0 / _targetReplayFps))
+            {
+                _lastFrameTime = now;
+                var frame = new
+                {
+                    Timestamp = DateTime.UtcNow,
+                    Frame = ++_frameOrder,
+                    Drones = dtoList
+                };
+                await _replayService.SaveFrameAsync(_currentReplayId, frame);
+            }
         };
     }
+
+    public async Task PlayReplayAsync(string replayId, double replayFps = 2.0, int chunkSize = 20, int currentIndex = 0)
+    {
+        var mainBuffer = new Queue<List<DroneDto>>();
+        var auxBuffer = new Queue<List<DroneDto>>();
+        bool isFetchingFrames = false;
+
+        _swarm.PauseSimulation();
+        _swarm.ClearDroneList();
+
+        var initialChunk = await _replayService.GetReplayChunkAsync<JsonElement>(replayId, currentIndex, chunkSize);
+        foreach (var frame in initialChunk)
+            mainBuffer.Enqueue(frame.GetProperty("Drones").Deserialize<List<DroneDto>>()!);
+
+        currentIndex += chunkSize;
+
+        while (mainBuffer.Count > 0)
+        {
+            var drones = mainBuffer.Dequeue();
+            await _hubContext.Clients.All.SendAsync("UpdateDrones", drones);
+
+            if (!isFetchingFrames && mainBuffer.Count <= chunkSize / 2)
+            {
+                isFetchingFrames = true;
+                _ = Task.Run(async () =>
+                {
+                    var nextChunk = await _replayService.GetReplayChunkAsync<JsonElement>(
+                        replayId, currentIndex, chunkSize);
+                    lock (auxBuffer)
+                    {
+                        foreach (var frame in nextChunk)
+                            auxBuffer.Enqueue(frame.GetProperty("Drones").Deserialize<List<DroneDto>>()!);
+                    }
+                    currentIndex += chunkSize;
+                    isFetchingFrames = false;
+                });
+            }
+
+            if (mainBuffer.Count == 0)
+            {
+                lock (auxBuffer)
+                {
+                    while (auxBuffer.Count > 0)
+                        mainBuffer.Enqueue(auxBuffer.Dequeue());
+                }
+            }
+
+            await Task.Delay((int)(1000 / replayFps));
+        }
+    }
+
+    public async Task<IReadOnlyList<ReplayInfo>> GetReplayList()
+    {
+        return await _replayService.ListReplaysAsync();
+    }
+
+    public async Task DeleteReplayAsync(string sessionId)
+    {
+        await _replayService.DeleteReplayAsync(sessionId);
+    }
+
+    public async Task StartReplay()
+    {
+        if (_isRecording)
+            throw new InvalidOperationException("Error: Already recording.");
+
+        _frameOrder = 0;
+        _currentReplayId = Guid.NewGuid().ToString();
+        await _replayService.RegisterReplayAsync(_currentReplayId);
+        _isRecording = true;
+    }
+
+    public void StopReplay()
+    {
+        _isRecording = false;
+        _currentReplayId = null;
+    }
+
 }

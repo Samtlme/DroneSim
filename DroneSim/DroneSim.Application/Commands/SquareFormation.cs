@@ -2,35 +2,34 @@
 using DroneSim.Core.Interfaces;
 using DroneSim.Core.Services;
 
-namespace DroneSim.Application.Commands
-{
-    internal class SquareFormation(SwarmService swarm, PhysicsService physics) : ICommand
-    {
-        private readonly SwarmService _swarm = swarm;
-        private readonly PhysicsService _physics = physics;
-        public int Priority { get; } = 3;
-        public string Name { get; } = "Square Formation";
-        public Task<bool> ExecuteAsync()
-        {
-            var total = _swarm.GetDroneList.Count;
-            var quantityPerSide = (int)Math.Ceiling(Math.Sqrt(total));
-            var initialpos = _physics.CalculateCenterOfMass(_swarm.GetDroneList);
-            var initialX = initialpos.X;
+namespace DroneSim.Application.Commands;
 
-            int counter = 1;
-            foreach (var drone in _swarm.GetDroneList)
+internal class SquareFormation(SwarmService swarm, PhysicsService physics) : ICommand
+{
+    private readonly SwarmService _swarm = swarm;
+    private readonly PhysicsService _physics = physics;
+    public int Priority { get; } = 3;
+    public string Name { get; } = "Square Formation";
+    public Task<bool> ExecuteAsync()
+    {
+        var total = _swarm.GetDroneList.Count;
+        var quantityPerSide = (int)Math.Ceiling(Math.Sqrt(total));
+        var initialpos = _physics.CalculateCenterOfMass(_swarm.GetDroneList);
+        var initialX = initialpos.X;
+
+        int counter = 1;
+        foreach (var drone in _swarm.GetDroneList)
+        {
+            drone.PositionOffset = initialpos;
+            initialpos.X += SimulationConfig.MinSeparationDistance;
+            if (counter >= quantityPerSide)
             {
-                drone.PositionOffset = initialpos;
-                initialpos.X += SimulationConfig.MinSeparationDistance;
-                if (counter >= quantityPerSide)
-                {
-                    initialpos.X = initialX;
-                    initialpos.Z += SimulationConfig.MinSeparationDistance;
-                    counter = 0;
-                }
-                counter++;
+                initialpos.X = initialX;
+                initialpos.Z += SimulationConfig.MinSeparationDistance;
+                counter = 0;
             }
-            return Task.FromResult(true);
+            counter++;
         }
+        return Task.FromResult(true);
     }
 }

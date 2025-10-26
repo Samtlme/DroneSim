@@ -3,7 +3,11 @@ using DroneSim.Application.UseCases.Simulation;
 using DroneSim.Application.UseCases.Swarm;
 using DroneSim.Core.Entities;
 using DroneSim.Core.Services;
+using DroneSim.Infrastructure.Redis;
 using Microsoft.AspNetCore.Mvc;
+using DroneSim.Infrastructure.Replay;
+using StackExchange.Redis;
+using DroneSim.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +26,12 @@ if (builder.Environment.IsDevelopment())
 }
 
 //DI and services
+
+builder.Services.AddSingleton(new RedisConnectionFactory("localhost:6379"));
+builder.Services.AddSingleton<IConnectionMultiplexer>(x =>
+    x.GetRequiredService<RedisConnectionFactory>().GetConnection()
+);
+
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<PhysicsService>();
 builder.Services.AddSingleton<CommandService>();
@@ -29,6 +39,7 @@ builder.Services.AddSingleton<SwarmService>();
 builder.Services.AddSingleton<SwarmNotifier>();
 builder.Services.AddSingleton<SimulationManager>();
 builder.Services.AddSingleton<SwarmCommandManager>();
+builder.Services.AddSingleton<ReplayService>();
 
 var app = builder.Build();
 
@@ -59,7 +70,7 @@ app.MapPost("/Api/Simulation/setConfig", (SimulationManager swarmSM, SimulationC
 {
     try
     {
-        swarmSM.setConfiguration(newConfig);
+        swarmSM.SetConfiguration(newConfig);
         return Results.Ok("Settings modified");
     }
     catch (Exception ex)
@@ -122,6 +133,41 @@ app.MapPost("/Api/Simulation/dronesDown", (SwarmCommandManager swarmCM) =>
     swarmCM.MoveDronesDown();
     return Results.Ok($"Cube formation requested");
 });
+#endregion
+
+
+#region Replays
+app.MapPost("/Api/Replay/start", (SwarmNotifier notifier, SimulationManager swarmSM) =>
+{
+    swarmSM.StartSimulation(0);
+    var id = notifier.StartReplay();
+    return Results.Ok(new { ReplayId = id });
+});
+
+app.MapPost("/Api/Replay/stop", (SwarmNotifier notifier) =>
+{
+    notifier.StopReplay();
+    return Results.Ok();
+});
+
+app.MapPost("/Api/Replay/getReplays", async (SwarmNotifier notifier) =>
+{
+    var replays = await notifier.GetReplayList();
+    return Results.Ok(replays);
+});
+
+app.MapPost("/Api/Replay/playReplay", async (SwarmNotifier notifier, [FromBody] string replayId) =>
+{
+    await notifier.PlayReplayAsync(replayId);
+    return Results.Ok();
+});
+
+app.MapPost("/Api/Replay/deleteReplay", async (SwarmNotifier notifier, [FromBody] string replayId) =>
+{
+    await notifier.DeleteReplayAsync(replayId);
+    return Results.Ok();
+});
+
 #endregion
 
 app.Run();

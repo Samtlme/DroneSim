@@ -8,6 +8,7 @@
   --accent: #8682B4;
   --accent-gradient: linear-gradient(180deg, #6964a0ce 0%, #00000055 110%);
   --accent-secondary: #C2BFCF;
+  --accent-secondary-hover: #E2E6EA;
 }
 
 body {
@@ -22,7 +23,15 @@ body {
 .config-tab {
   max-width: 80%;
   padding: 1%;
-  margin-left: 0;
+}
+
+.replays-tab{
+  max-width: 100%;
+  padding: 2%;
+  display: flex;
+  flex-direction: column;
+  height: 90%;
+  padding-bottom: 1rem;
 }
 
 .sidebar {
@@ -46,7 +55,7 @@ body {
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
   margin-bottom: 0;
-  background-color: var(--primary-white-dark);
+  background-color: var(--primary-color-dark);
 }
 
 .sidebar .nav-link:not(.active):not(:hover) {
@@ -97,6 +106,16 @@ body {
   width: 70px !important;
 }
 
+.btn.btn-recording i {
+  animation: blink-red 1s infinite;
+}
+
+@keyframes blink-red {
+  0% {color: inherit;}
+  50% {color: #e51f33;}
+  100% {color: inherit;}
+}
+
 .btn-group .btn,
 .btn-group-vertical .btn {
   padding: 0px;
@@ -124,7 +143,7 @@ body {
   box-shadow: 0 5px 10px rgba(0,0,0,0.15);
 }
 
-.btn-group.btn:active,
+.btn-group .btn:active,
 .btn-group-vertical .btn:active {
   transform: translateY(0);
   box-shadow: 0 3px 6px rgba(0,0,0,0.1);
@@ -188,4 +207,34 @@ body {
 
 canvas{
   background-color: white;
+}
+
+#replayList {
+    overflow-y: auto;
+    padding: 30px;
+}
+
+#replayList .list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 700;
+    height: 80px;
+    margin-bottom: 0.3rem;
+    padding: 0.6rem 1rem;
+    transition: background 0.2s, transform 0.1s;
+    background-color: var(--accent-secondary);
+}
+
+#replayList .list-group-item:hover {
+    background-color: var(--accent-secondary-hover);
+    transform: scale(1.02);
+}
+
+#replayList .list-group-item.active {
+    background-color: var(--accent);
+    color: white;
+    font-weight: 500;
 }
