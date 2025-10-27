@@ -14,23 +14,23 @@ using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
-if (builder.Environment.IsDevelopment())
+var frontendUrl = builder.Configuration["FrontendUrl"] ?? "http://localhost:5173";  //TODO review how to make this work properly with config
+
+builder.Services.AddCors(options =>
 {
-    builder.Services.AddCors(options =>
+    options.AddPolicy("CorsPolicy", policy =>
     {
-        options.AddDefaultPolicy(policy =>
-        {
-            policy.WithOrigins("http://localhost:5173")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowCredentials();
-        });
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
-}
+});
 
 //DI and services
 
-builder.Services.AddSingleton(new RedisConnectionFactory("localhost:6379"));
+var redisHost = builder.Configuration["Redis:Host"] ?? "localhost";
+builder.Services.AddSingleton(new RedisConnectionFactory($"{redisHost}:6379"));
 builder.Services.AddSingleton<IConnectionMultiplexer>(x =>
     x.GetRequiredService<RedisConnectionFactory>().GetConnection()
 );
@@ -49,10 +49,7 @@ var app = builder.Build();
 
 var swarmNotifier = app.Services.GetRequiredService<SwarmNotifier>();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseCors();
-}
+app.UseCors("CorsPolicy");
 
 app.UseMiddleware<GlobalErrorHandler>();
 app.UseHttpsRedirection();

@@ -1,0 +1,30 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: DroneSim.Api/Dockerfile
+    container_name: dronesim-api
+    ports:
+      - "5117:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - FrontendUrl=http://frontend:5173
+      - Redis__Host=redis
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7
+    container_name: dronesim-redis
+    ports:
+      - "6379:6379"
+
+  frontend:
+    build:
+      context: ./DroneSim.Frontend
+      dockerfile: Dockerfile
+    container_name: dronesim-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api

@@ -61,7 +61,6 @@ public class SwarmCommandManager(PhysicsService physicsService, CommandService c
         );
     }
 
-
     public void MirrorToVertical()
     {
         var drones = _swarmService.GetDroneList;

@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import * as api from './api.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 export class Simulator {
@@ -94,7 +95,7 @@ export class Simulator {
         if (intersects.length > 0) {
             this.createWaypoint(intersects[0].point);
 
-             fetch("https://localhost:7057/Api/Simulation/movetotarget", {
+             fetch(api.API_BASE + "Simulation/movetotarget", {
                 method: "POST",
                 headers: {
                 "Content-Type": "application/json"

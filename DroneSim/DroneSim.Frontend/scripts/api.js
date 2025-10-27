@@ -1,4 +1,4 @@
-const API_BASE = 'https://localhost:7057/Api/'; //temp dev address
+export const API_BASE = import.meta.env.VITE_API_BASE + "/Api/";
 
 async function apiCall(endpoint, data = null) {
   try {

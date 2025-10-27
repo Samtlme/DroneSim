@@ -81,7 +81,7 @@ internal class CustomFormation(SwarmService swarm, List<List<Vector2>> pointList
 
         var interpolatedPositions = interpolatePositions(dronesPerStroke, strokeDistances, _pointListVectors); //5.2 and 5.3
 
-        var flightHeight = SimulationConfig.YMin + 15f;
+        var flightHeight = SimulationConfig.YMin + 10f;
 
         for (int i = 0; i < drones.Count && i < interpolatedPositions.Count; i++)
         {

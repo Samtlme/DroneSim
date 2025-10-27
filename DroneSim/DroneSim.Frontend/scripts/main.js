@@ -1,3 +1,6 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../styles/main.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import * as api from './api.js';
 import { Simulator } from './simulator.js';
 import * as signalR from '@microsoft/signalr';
@@ -56,7 +59,7 @@ async function initSignalR(){
 if(!connection)
   {
     connection = new signalR.HubConnectionBuilder()
-    .withUrl("https://localhost:7057/Api/Simulation/droneshub")
+    .withUrl( api.API_BASE + "Simulation/droneshub")
     .withAutomaticReconnect()
     .build();
 
