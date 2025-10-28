@@ -8,7 +8,6 @@
 	<script type="module" src="scripts/main.js" defer></script>
 </head>
 
-
 <body>
 
 	<div class="sidebar nav flex-row nav-pills" id="v-pills-tab" role="tablist">
@@ -90,13 +89,26 @@
 						<button id="droneUp" class="btn btn-small"><i class="bi bi-arrow-up"></i></button>
 					</div>
 
+					<button class="btn btn-label mt-2" disabled>Controls</button>
+					<div class="w-100 controls">
+						<strong>Camera:</strong>
+						<br>
+						<i class="bi bi-mouse"></i> LClick (Drag) + <i class="bi bi-arrows-fullscreen"></i> 
+						<br>
+  						<i class="bi bi-mouse2"></i> RClick (Drag) + <i class="bi bi-arrows-move fs-6"></i> 
+						<br>
+						<strong>Commands:</strong>
+						<br>
+						<i class="bi bi-mouse"></i> LClick + Ctrl - Move
+					</div>
+
 				</div>
 				<div id="simulator-container"></div>
 			</div>
 		</div>
 
 		<div class="tab-pane fade replays-tab" id="replays-tab-content" role="tabpanel">
-			<h2 class="mb-4">
+			<h2 class="mb-3">
 				<i class="bi bi-view-list"></i>
 				Replays
 			</h2>

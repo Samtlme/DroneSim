@@ -141,11 +141,11 @@ function animateDrones() {
 animateDrones();
 
 //Configuration tab
-AddConfigSlider('config-options', 'CohesionSpeedFactor', 'Cohesion Speed', 0, 3, 0.1,  0.3);
+AddConfigSlider('config-options', 'CohesionSpeedFactor', 'Cohesion Speed', 0, 3, 0.1, 0.3);
 AddConfigSlider('config-options', 'SeparationSpeedFactor', 'Separation Speed', 0, 5, 0.1, 0.5);
-AddConfigSlider('config-options', 'MaxDroneSpeedLimit', 'Max Drone Speed', 0, 5, 0.1,  1);
-AddConfigSlider('config-options', 'SwarmSpeedMultiplier', 'Swarm Speed Multiplier', 0, 5, 1, 1);
-AddConfigSlider('config-options', 'MinSeparationDistance', 'Min Separation Distance', 0, 10, 1, 3);
+AddConfigSlider('config-options', 'MaxDroneSpeedLimit', 'Max Drone Speed', 0, 5, 0.1, 1);
+AddConfigSlider('config-options', 'SwarmSpeedMultiplier', 'Swarm Speed Multiplier', 0, 5, 0.1, 1);
+AddConfigSlider('config-options', 'MinSeparationDistance', 'Min Separation Distance', 0, 10, 0.1, 3);
 AddConfigSlider('config-options', 'WindForceFactor', 'Wind Force Factor', 0, 1, 0.1, 0.2 );
 AddConfigSlider('config-options', 'TargetThreshold', 'Target Threshold Distance', 0, 100, 1, 10);
 
@@ -219,6 +219,7 @@ replays.forEach(replay => {
     li.classList.add('active');
     initSignalR();
     api.playReplay(replay.id);
+    document.getElementById('simulation-tab').click();
   };
 
   btnGroup.appendChild(playBtn);

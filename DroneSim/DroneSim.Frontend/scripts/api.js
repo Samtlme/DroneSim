@@ -33,4 +33,4 @@ export async function playReplay(replayId) { return apiCall('replay/playReplay',
 export async function deleteReplay(replayId) { return apiCall('replay/deleteReplay',replayId); }
 
 
-export async function setConfig(configValues) { return apiCall('setConfig',configValues); }
+export async function setConfig(configValues) { return apiCall('Simulation/setConfig',configValues); }

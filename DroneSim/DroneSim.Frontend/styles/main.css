@@ -20,9 +20,13 @@ body {
   font-family: "Helvetica", "Arial", sans-serif;
 }
 
+.controls {
+  font-size: 12px;
+}
+
 .config-tab {
   max-width: 80%;
-  padding: 1%;
+  padding: 2%;
 }
 
 .replays-tab{
@@ -51,11 +55,40 @@ body {
 .sidebar .nav-link {
   text-align: center;
   display: inline-block;
-  width: 150PX;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
+  width: 160px;
+  border-radius: 0;
   margin-bottom: 0;
-  background-color: var(--primary-color-dark);
+  background: var(--bg-color);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.sidebar .nav-link::before,
+.sidebar .nav-link::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.sidebar .nav-link::before {
+  top: 0;
+}
+
+.sidebar .nav-link::after {
+  bottom: 0;
+}
+
+.sidebar .nav-link:hover::before,
+.sidebar .nav-link:hover::after,
+.sidebar .nav-link.active::before,
+.sidebar .nav-link.active::after {
+  width: 100%;
 }
 
 .sidebar .nav-link:not(.active):not(:hover) {
@@ -66,15 +99,15 @@ body {
   color: var(--accent-secondary);
   box-shadow: 0 -5px 3px rgb(73, 73, 73);
   background-color: rgba(0, 0, 0, 0.149);
-  transition: all 0.3s ease;
 }
 
 .nav-pills .nav-link.active{
   background: var(--accent-gradient);
+  color: white;
 }
 
 .content {
-  margin-top: 5vh;
+  margin-top: 4vh;
   height: 100vh;
   overflow-y: auto;
   background: var(--bg-color);
@@ -83,7 +116,7 @@ body {
 
 #simulator-container {
   width: 95%;
-  height: 89vh;
+  height: 90vh;
   background: var(--bg-color);
   border: 1px solid #212529;
   margin-top: 0px;
@@ -120,7 +153,7 @@ body {
 .btn-group-vertical .btn {
   padding: 0px;
   width: 140px;
-  height: 40px;
+  height: 36px;
   border-radius: 0;
   background-color: var(--secondary-color);
   color: white;
