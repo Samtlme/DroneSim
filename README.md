@@ -8,7 +8,8 @@
 DroneSim Simulator is a real-time web application that emulates large-scale drone swarms. It features a Clean Architecture backend built with .NET 9(*) and a Three.js-based frontend, enabling seamless real-time interaction between users and drone swarms through SignalR.
 
 The simulator provides an interactive environment where users can control hundreds — or even thousands — of drones, experiment with dynamic formations, and observe emergent swarm behavior driven by boid-inspired rules. Originally conceived as a small portfolio challenge, the project became an opportunity to explore new technologies and paradigms beyond my usual comfort zone.
-<small>(*) Migration to .NET 10 planned upon release</small>
+
+##### (*) Migration to .NET 10 planned upon release
 
 <br>
 
@@ -50,7 +51,7 @@ docker-compose up --build
 ```
 
 Once the containers are running, open your browser at http://localhost:5173 to access the web interface.
-<small>Note: If port 5173 is already in use, Docker will automatically assign a different one — check the container logs or the terminal output for the mapped port.</small>
+##### Note: If port 5173 is already in use, Docker will automatically assign a different one — check the container logs or the terminal output for the mapped port.
 <br>
 
 
