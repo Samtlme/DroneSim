@@ -45,7 +45,7 @@ You can run it directly via Docker for quick deployment, or use the local .NET +
 ### Quick Start
 ```bash
 git clone https://github.com/Samtlme/DroneSim
-cd DroneSim
+cd DroneSim/DroneSim
 docker-compose up --build
 ```
 
