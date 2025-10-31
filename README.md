@@ -1,4 +1,8 @@
-# DroneSim Simulator
+# *DroneSim*
+
+<p align="center">
+  <img src="./Images/zoomout_sample.gif" alt="replay" />
+</p>
 
 ## Overview
 DroneSim Simulator is a real-time web application that emulates large-scale drone swarms. It features a Clean Architecture backend built with .NET 9(*) and a Three.js-based frontend, enabling seamless real-time interaction between users and drone swarms through SignalR.
@@ -9,11 +13,20 @@ The simulator provides an interactive environment where users can control hundre
 <br>
 
 ## Features
-- **Real-time swarm simulation:** Control hundreds to thousands of drones simultaneously with smooth updates.  
-- **Custom formations:** Switch between predefined formations (square, cube) or draw custom formations directly on the frontend.  
+- **Real-time swarm simulation:** Control hundreds to thousands of drones simultaneously with smooth updates.
+- **Night mode scene visualization:** Enhanced visual mode with glowing drones and dark backgrounds for improved aesthetics.  
+- **Custom formations:** Switch between predefined formations (square, cube) or draw custom formations directly on the frontend. 
+
+<p align="center">
+  <img src="./Images/samtlme_sample.gif" alt="replay" />
+</p>
+
 - **Interactive commands:** Move, change altitude, disband, or adjust configurable simulation parameters such as separation, cohesion, and environmental forces.
 - **Replay system:** Record and playback simulations for analysis, demonstration, or just for fun, powered by Redis backend storage.
-- **Night mode scene visualization:** Enhanced visual mode with glowing drones and dark backgrounds for improved aesthetics.
+<p align="center">
+  <img src="./Images/replay_sample.gif" alt="replay" />
+</p>
+
 
 <br>
 
@@ -62,11 +75,6 @@ graph TD
     Application --> Infrastructure["Infrastructure"]
     Infrastructure --> Redis["Redis (Replay Storage)"]
 ```
-
-<br>
-
-## Screenshots
-
 
 <br>
 
