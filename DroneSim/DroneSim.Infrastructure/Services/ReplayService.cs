@@ -1,7 +1,8 @@
 ﻿using DroneSim.Core.Entities;
+using DroneSim.Core.Interfaces;
+using DroneSim.Infrastructure.Extensions;
 using StackExchange.Redis;
 using System.Text.Json;
-using DroneSim.Core.Interfaces;
 namespace DroneSim.Infrastructure.Services;
 
 public class ReplayService(IConnectionMultiplexer redis) : IReplayRepository
@@ -23,11 +24,7 @@ public class ReplayService(IConnectionMultiplexer redis) : IReplayRepository
     {
         var items = await _db.ListRangeAsync("replayList");
 
-        return items.Select(x =>
-        {
-            var meta = JsonSerializer.Deserialize<ReplayInfo>(x!);
-            return meta!;
-        }).ToList();
+        return items.Select(x => x.DeserializeJson<ReplayInfo>()).ToList();
     }
     public async Task DeleteReplayAsync(string sessionId)
     {
@@ -36,7 +33,7 @@ public class ReplayService(IConnectionMultiplexer redis) : IReplayRepository
 
         foreach (var entry in allReplays)
         {
-            var replay = JsonSerializer.Deserialize<ReplayInfo>(entry!);
+            var replay = entry.DeserializeJson<ReplayInfo>();
             if (replay != null && replay.Id == sessionId)
             {
                 await _db.ListRemoveAsync("replayList", entry);
@@ -58,7 +55,7 @@ public class ReplayService(IConnectionMultiplexer redis) : IReplayRepository
     {
         var endIndex = startIndex + count - 1;
         var frames = await _db.ListRangeAsync($"replay:{sessionId}", startIndex, endIndex);
-        return frames.Select(x => JsonSerializer.Deserialize<T>(x!)).ToList()!;
+        return frames.Select(x => x.DeserializeJson<T>()).ToList();
     }
 
 }
