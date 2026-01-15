@@ -80,7 +80,7 @@ graph TD
 <br>
 
 ### Future improvements
-- .NET 10 migration upon stable release
+- ~~.NET 10 migration upon stable release~~ (done)
 - Setup testing framework for backend and core logic
 - Frontend refactor
 - Integrate logging and performance metrics
