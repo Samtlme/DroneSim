@@ -67,11 +67,12 @@ DroneSim follows a Clean Architecture design to keep the codebase modular, maint
 ```mermaid
 graph TD
     User["User (Browser)"] --> Frontend["Frontend (Three.js)"]
-    Frontend -->|SignalR / REST| API["API (.NET)"]
+    Frontend --> API["API Layer (.NET 10)"]
+    
     API --> Application["Application Layer"]
-    Application --> Core["Core (Simulation Logic)"]
-    API -.->|Events| Core
-    Application --> Infrastructure["Infrastructure"]
+    Application --> Core["Core Layer (Domain / Boids Logic)"]
+    Infrastructure["Infrastructure Layer"] --> Core
+    
     Infrastructure --> Redis["Redis (Replay Storage)"]
 ```
 
@@ -79,7 +80,7 @@ graph TD
 
 ### Future improvements
 - ~~.NET 10 migration upon stable release~~ (done)
-- Setup testing framework for backend and core logic
+- ~~Setup testing framework for backend and core logic~~
 - Frontend refactor
 - Integrate logging and performance metrics
 - Replay controls
