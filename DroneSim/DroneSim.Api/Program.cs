@@ -139,7 +139,6 @@ app.MapPost("/Api/Simulation/dronesDown", (SwarmCommandManager swarmCM) =>
 });
 #endregion
 
-
 #region Replays
 
 app.MapPost("/Api/Replay/start", (SwarmNotifier notifier) =>
